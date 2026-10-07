@@ -2,9 +2,9 @@
 
 ## Purpose and scope
 
-This is a public directory of app privacy policies, terms of use, and support information. Visitors should find their app and open the relevant document immediately. Keep the existing English language and site name, as confirmed by the owner.
+This is a public directory of app privacy policies, terms of use, and support information. Visitors should find their app and open the relevant document immediately. The September 27, 2026 owner request adds English, Simplified Chinese, and Japanese throughout the site and replaces the earlier English-only rule.
 
-The existing project is plain HTML and shared CSS, intended for GitHub Pages. Preserve this architecture, all existing document URLs, and the existing legal text. No framework, package installation, backend, search, account system, or invented apps are needed. The working folder is on Windows and is not currently a Git repository.
+The project remains static HTML and shared CSS for GitHub Pages. Preserve original English document URLs; translated pages use same-directory language suffixes. A small local script may remember the chosen language, and a Node built-in-only maintenance script generates static pages. No framework, package installation, backend, search, account system, or invented apps are needed.
 
 ## Visual direction
 
@@ -41,7 +41,7 @@ A quiet, carefully typeset document library: warm paper, dark ink, restrained te
 
 Apply the same identity, palette, spacing, favicon, and footer to all six existing document and template pages. Provide a small `All apps` breadcrumb or back link above the document. Set the active Privacy/Terms/Support link with `aria-current="page"`. Keep article typography calm and readable, with clear heading hierarchy and a narrow line length.
 
-Preserve the existing article text, app name, policy dates, email placeholders, and template tokens exactly; do not edit legal meaning or invent contact details. Existing `YOUR_EMAIL` values are a known publication prerequisite and must be explicitly documented in README/PROJECT. Do not treat these as verified working email contacts. Template pages should use the same layout and remain absent from the homepage directory.
+Preserve the legal facts, app name, September 20, 2026 policy date, and template tokens. The current owner request replaces the former named contact with an anonymous independent-developer identity and supplies one real contact address through `assets/site-config.js`; generated public HTML must contain its working mailto link. Template `YOUR_EMAIL` remains a token and template pages stay absent from the homepage. All three formal documents are fully translated into Simplified Chinese and Japanese without adding legal claims.
 
 ## Maintenance and delivery
 

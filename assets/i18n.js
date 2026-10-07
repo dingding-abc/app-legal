@@ -1,0 +1,103 @@
+/* Maintained chrome and metadata translations for scripts/build-site.cjs. */
+(function (root) {
+  'use strict';
+  const supported = ['en', 'zh-Hans', 'ja'];
+  const messages = {
+    en: {
+      title: 'App Legal & Support',
+      homeDescription: 'Privacy, terms and support for the Light and Smart app collections.',
+      page: {
+        privacy: ['Privacy Policy', 'Privacy Policy for AlignerDiary.'],
+        terms: ['Terms of Use', 'Terms of Use for AlignerDiary.'],
+        support: ['Support', 'Support information for AlignerDiary.'],
+      },
+      ui: {
+        skip: 'Skip to content', brandHome: 'App Legal & Support home', languageLabel: 'Language', primaryNav: 'Primary navigation',
+        apps: 'Apps', contact: 'Contact', navDocs: 'AlignerDiary documents', templateNavDocs: 'APP_NAME documents',
+        privacyShort: 'Privacy', termsShort: 'Terms', supportShort: 'Support', allApps: 'All apps',
+        privacy: 'Privacy Policy', terms: 'Terms of Use', support: 'Support',
+        lastUpdated: 'Last updated: September 20, 2026',
+        footer: '© 2026 Independent Developer. All rights reserved.',
+        templateMeta: 'APP_NAME Support',
+        homeEyebrow: 'APP INFORMATION', heroLine1: 'Thoughtful apps.', heroLine2: 'Clear information.',
+        heroIntro1: 'Privacy, terms and support.', heroIntro2: 'Everything you need to know about the apps you use.',
+        explore: 'Explore the collections', directoryHeading: 'App collections',
+        directoryCaption: 'Find your app. Get the details.', collection: 'Collection', oneApp: '01 APP',
+        lightCaption: 'Local-first tools for everyday moments.', smartCaption: 'AI-powered tools, thoughtfully made.',
+        emptyHeading: 'No apps here yet.', emptyCopy: 'New app information will appear here when available.', emptyLabel: 'ROOM TO GROW',
+        alignerDescription: 'A personal record of your aligner journey.',
+        privacyCaption: 'How your information is handled.',
+        termsCaption: 'Guidelines for using the app.',
+        supportCaption: 'Contact details and help.',
+        hereToHelp: 'HERE TO HELP', contactHeading: 'A question about an app?',
+        contactCopy: 'Find contact details and practical help on its support page.',
+        getSupport: 'Get support', light: 'Light', smart: 'Smart',
+      },
+    },
+    'zh-Hans': {
+      title: '应用法律与支持',
+      homeDescription: '轻应用与智能应用的隐私政策、使用条款和支持信息。',
+      page: {
+        privacy: ['隐私政策', '齿间时光（AlignerDiary）隐私政策。'],
+        terms: ['使用条款', '齿间时光（AlignerDiary）使用条款。'],
+        support: ['支持', '齿间时光（AlignerDiary）支持信息。'],
+      },
+      ui: {
+        skip: '跳至正文', brandHome: '应用法律与支持首页', languageLabel: '语言', primaryNav: '主导航',
+        apps: '应用', contact: '联系', navDocs: '齿间时光文档', templateNavDocs: 'APP_NAME 文档',
+        privacyShort: '隐私', termsShort: '条款', supportShort: '支持', allApps: '全部应用',
+        privacy: '隐私政策', terms: '使用条款', support: '支持',
+        lastUpdated: '最后更新：2026年9月20日',
+        footer: '© 2026 独立开发者。保留所有权利。',
+        templateMeta: 'APP_NAME 支持',
+        homeEyebrow: '应用信息', heroLine1: '用心做应用。', heroLine2: '把信息说清楚。',
+        heroIntro1: '隐私、条款与支持。', heroIntro2: '关于你使用的应用，所需信息都在这里。',
+        explore: '浏览应用分类', directoryHeading: '应用分类',
+        directoryCaption: '找到应用，查看详情。', collection: '系列', oneApp: '01 款应用',
+        lightCaption: '本地优先，轻巧好用。', smartCaption: '让 AI 帮上忙的工具。',
+        emptyHeading: '此处暂无应用。', emptyCopy: '新应用就绪后，其信息会显示在这里。', emptyLabel: '期待更多',
+        alignerDescription: '记录你的隐形牙套旅程。',
+        privacyCaption: '了解你的信息如何处理。',
+        termsCaption: '了解应用的使用规则。',
+        supportCaption: '查找联系信息与帮助。',
+        hereToHelp: '为你提供帮助', contactHeading: '对应用有疑问？',
+        contactCopy: '在应用的支持页面查找联系信息和实用帮助。',
+        getSupport: '获取支持', light: '轻应用', smart: '智能应用',
+      },
+    },
+    ja: {
+      title: 'アプリの法的情報とサポート',
+      homeDescription: 'ライトとスマートのアプリについて、プライバシー、利用規約、サポートをご案内します。',
+      page: {
+        privacy: ['プライバシーポリシー', 'AlignerDiary（齿间时光）のプライバシーポリシー。'],
+        terms: ['利用規約', 'AlignerDiary（齿间时光）の利用規約。'],
+        support: ['サポート', 'AlignerDiary（齿间时光）のサポート情報。'],
+      },
+      ui: {
+        skip: '本文へ移動', brandHome: 'アプリの法的情報とサポートのホーム', languageLabel: '言語', primaryNav: 'メインナビゲーション',
+        apps: 'アプリ', contact: 'お問い合わせ', navDocs: 'AlignerDiaryの文書', templateNavDocs: 'APP_NAMEの文書',
+        privacyShort: 'プライバシー', termsShort: '利用規約', supportShort: 'サポート', allApps: 'すべてのアプリ',
+        privacy: 'プライバシーポリシー', terms: '利用規約', support: 'サポート',
+        lastUpdated: '最終更新日：2026年9月20日',
+        footer: '© 2026 個人開発者。無断転載を禁じます。',
+        templateMeta: 'APP_NAME サポート',
+        homeEyebrow: 'アプリ情報', heroLine1: '想いを込めたアプリ。', heroLine2: '分かりやすい情報。',
+        heroIntro1: 'プライバシー、利用規約、サポート。', heroIntro2: 'お使いのアプリについて必要な情報をここで確認できます。',
+        explore: 'コレクションを見る', directoryHeading: 'アプリのコレクション',
+        directoryCaption: 'アプリを選び、詳しい情報へ。', collection: 'コレクション', oneApp: 'アプリ 1 件',
+        lightCaption: '端末で使える、軽やかな日常の道具。', smartCaption: 'AIで、日々の工夫をもっと身近に。',
+        emptyHeading: 'アプリはまだありません。', emptyCopy: '新しいアプリの情報が準備でき次第、こちらに掲載します。', emptyLabel: 'これからの場所',
+        alignerDescription: 'アライナーの記録を残す個人用アプリ。',
+        privacyCaption: '情報の取り扱いについて。',
+        termsCaption: 'アプリの利用条件について。',
+        supportCaption: '連絡先とヘルプについて。',
+        hereToHelp: 'サポートのご案内', contactHeading: 'アプリについてご質問ですか？',
+        contactCopy: '連絡先と使い方のヒントは、各アプリのサポートページで確認できます。',
+        getSupport: 'サポートを見る', light: 'ライト', smart: 'スマート',
+      },
+    },
+  };
+
+  root.SiteI18nData = Object.freeze({ messages, supported });
+  if (typeof module === 'object' && module.exports) module.exports = { messages, supported };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
