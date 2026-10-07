@@ -1,59 +1,52 @@
 # App Legal & Support — design specification
 
-## Purpose and scope
+Updated October 7, 2026. The requested direction combines a recognizable independent-app identity with practical document navigation. English, Chinese and Japanese each use a deliberately chosen local typeface.
 
-This is a public directory of app privacy policies, terms of use, and support information. Visitors should find their app and open the relevant document immediately. The September 27, 2026 owner request adds English, Simplified Chinese, and Japanese throughout the site and replaces the earlier English-only rule.
+## References and interpretation
 
-The project remains static HTML and shared CSS for GitHub Pages. Preserve original English document URLs; translated pages use same-directory language suffixes. A small local script may remember the chosen language, and a Node built-in-only maintenance script generates static pages. No framework, package installation, backend, search, account system, or invented apps are needed.
+The following public Figma Community previews were inspected in the browser:
 
-## Visual direction
+- [Nature Inspired Visual Essay](https://www.figma.com/community/file/1494802487063033242/nature-inspired-visual-essay): deep green, asymmetric composition and expressive serif type.
+- [Minimalist Design Student Portfolio](https://www.figma.com/community/file/1498071814425915852/minimalist-design-student-portfolio): a clear opening statement and a visual project index.
+- [Retro-Industrial Music Event](https://www.figma.com/community/file/1497430039004576833/retro-industrial-music-event): a comparison for stronger contrast; its event-specific style was not adopted.
 
-A quiet, carefully typeset document library: warm paper, dark ink, restrained teal details, and generous but purposeful spacing. It should feel trustworthy and welcoming without making unverified privacy or security claims.
+These inform proportions, hierarchy and contrast. The notebook illustration, site markup and styles are original to this project; no template images or design files were copied.
 
-- Background: warm off-white `#f7f8f5`; surfaces `#ffffff`.
-- Main text: deep ink `#20332f`; supporting text `#5d6d67`.
-- Accent: dark teal `#245f50`; pale accent surface `#eaf1eb`.
-- Borders: `#dde4dd`; avoid broad gradients, heavy shadows, and decorative stock imagery.
-- Use a system sans-serif font stack, with Georgia for the homepage headline only. No remotely loaded assets or fonts.
-- Overall content width: about 1080 px. Document reading width: about 780 px.
-- Use small custom inline SVG marks: a folded document for the site identity, a simple AD monogram for AlignerDiary (a directory identifier, not an asserted official app logo).
-- Corners: around 18–24 px for the app panel, 10–14 px for document links. Hairline borders and restrained hover transitions.
+## Visual system
 
-## Homepage composition
+- Cream paper `#f5f4ee`, off-white content `#fffefa`, deep ink `#263e32`, accent `#355c43`, a small amount of lime `#d5e79a`.
+- Wide opening with the title on the left and a short explanation on the right, separated by a fine rule.
+- English display: Fraunces, with a real italic second title line. English body and Latin app name: Inter.
+- Simplified Chinese: LXGW WenKai, with a regular-weight title that preserves the approved handwritten character.
+- Japanese: Zen Maru Gothic, with rounded Japanese letterforms, a medium-weight title and separately tuned size and spacing.
+- All fonts are bundled locally. See `assets/fonts/SOURCE.md` for licenses, source snapshots and subset maintenance.
+- Overall width: 1080 px. Reading column: 760 px. Use a single 16 px rounded app panel, without nested cards or broad shadows.
 
-1. Header, around 80 px high: a compact document mark and the existing site name on the left; `Apps` and `Contact` anchor links on the right. No sticky obstruction on small screens.
-2. Intro, around 64 px top padding on desktop: a small `APP INFORMATION` eyebrow, a two-line editorial headline `A home for the details.` at about 60–68 px, followed by `Privacy policies, terms of use, and support for our apps.` in a readable supporting size. A small subtle document motif may balance the right side, but must not compete with the directory. Do not create an oversized marketing hero.
-3. App directory visible within a normal desktop first viewport. A section label `Our apps` and a brief right-aligned `Policies & support` descriptor. One full-width app panel for AlignerDiary. Header row contains the monogram, app name, and factual description `A personal record of your aligner journey.` derived from the existing app-purpose paragraph.
-4. Inside that panel, three equally weighted document links in a desktop row. Each is a real anchor with an understated icon, descriptive title, short caption, and arrow. Titles: `Privacy Policy`, `Terms of Use`, `Support`. Captions: `How your information is handled.`, `Guidelines for using the app.`, `Contact details and help.` Preserve the current relative paths. Use a clear hover treatment and visible keyboard focus. Avoid app-store badges, invented product status, dates, or platform claims.
-5. Compact contact strip below the directory: `Need a hand?` with a sentence directing visitors to the support page for their app. Link back to the app directory as `Find app support`, rather than inventing a shared email address. Do not duplicate a large promotional card.
-6. Minimal footer with site name and the existing copyright wording. Subtle divider and generous whitespace finish the page.
+## Homepage
+
+1. Compact masthead, document mark, section links, and visible active language.
+2. A two-line handbook title and a factual description of the documents. The browse link leads directly to the app directory.
+3. Light category header. One featured AlignerDiary panel: a deep-green illustrated notebook cover on the left; the exact localized App Store title, the other two language titles, a direct App Store download link, and three numbered document links on the right. All three titles remain visible without JavaScript, truncation or tooltips. Names use their own language typefaces. The cover is decorative, not a representation of the app interface or an official app icon.
+4. Smart is a compact category row with an explicit no-apps message. Do not invent a launch date or future product.
+5. Contact offers the same-language AlignerDiary support link, with a modest lime accent.
+6. Small footer with the existing independent-developer wording.
+
+## Documents and templates
+
+Keep the reading column open. Use the matching language typeface, the full localized App Store name in the app label, and a fine separator below the protected date. Preserve all existing legal paragraphs, sections, contacts and template tokens. Shared document navigation retains `aria-current="page"`; back links preserve language.
+
+Formal content and September 20, 2026 dates remain unchanged. The contact address is maintained only in `assets/site-config.js`. The template is never listed on the homepage.
 
 ## Responsive and accessible behavior
 
-- At narrow widths, use 20 px page gutters, a headline around 40 px, and stack the three document links vertically.
-- Keep the site identity and navigation legible at 320 px; allow header wrapping if needed.
-- Use semantic header/nav/main/section/article/footer elements, one h1, descriptive link names, and a visible-on-focus skip link.
-- Decorative SVGs are hidden from assistive technologies. Keyboard focus has a visible offset outline.
-- Avoid horizontal scrolling at 320/375 px and at increased text size. Interactive targets should be at least 44 px in practical dimensions.
-- Respect reduced-motion preferences. Main content and navigation must work with JavaScript disabled and without external network access.
+- Below 680 px, the introduction stacks and the app cover becomes a compact horizontal illustration above the document index. Outer gutters are 20 px.
+- Tune each language title separately. Keep all descriptions available, wrap long text and avoid horizontal scrolling at 320/375 px.
+- Preserve one h1, semantic regions, a visible skip link, practical 44 px navigation targets, keyboard focus and static language links.
+- Document rows use subtle arrow-background feedback; reduced motion disables transitions. Decorative artwork is hidden from assistive technology.
+- Content, navigation and fonts do not require JavaScript or remote services. The only runtime script remembers language preference.
 
-## Document pages and templates
+## Maintenance and validation
 
-Apply the same identity, palette, spacing, favicon, and footer to all six existing document and template pages. Provide a small `All apps` breadcrumb or back link above the document. Set the active Privacy/Terms/Support link with `aria-current="page"`. Keep article typography calm and readable, with clear heading hierarchy and a narrow line length.
+The homepage structure lives in `index.html`; text-only `data-i18n` elements are generated from `assets/i18n.js`. Document bodies retain their existing authority and generation direction. Run the normal build and site checks, plus the offline font check. Font updates require network access only when the maintained content adds characters beyond the bundled subset.
 
-Preserve the legal facts, app name, September 20, 2026 policy date, and template tokens. The current owner request replaces the former named contact with an anonymous independent-developer identity and supplies one real contact address through `assets/site-config.js`; generated public HTML must contain its working mailto link. Template `YOUR_EMAIL` remains a token and template pages stay absent from the homepage. All three formal documents are fully translated into Simplified Chinese and Japanese without adding legal claims.
-
-## Maintenance and delivery
-
-- README should describe this folder's actual purpose, structure, direct-open and local-server preview options, adding another app, publishing to GitHub Pages, stable per-app URLs, and the pre-publication content checks already present.
-- Add concise AGENTS.md and PROJECT.md for ongoing maintenance; PROJECT.md should point to this design, document authoritative content sources, and clearly distinguish intended hosting from deployed hosting.
-- Future apps are added by copying the template folder and duplicating the homepage app panel. Do not add unused automation or competing data sources.
-- Deliver the local implementation and preview. Deployment is outside this request.
-
-## Acceptance
-
-- Homepage presents the single real app with three correct document links and a polished compact composition.
-- The three AlignerDiary documents and three templates share the new visual language and retain their original article wording.
-- Existing relative URLs work both at a domain root and under a GitHub Pages repository path.
-- Check local assets, links, anchors, headings, keyboard navigation, and desktop/mobile layout; report checks actually performed.
-- No new runtime dependency or build requirement. No remote fonts, scripts, analytics, or invented product content.
+Check desktop, 375 px and 320 px pages, actual font readiness, keyboard navigation, language switching and repository-prefix navigation. Record actual results in `PROJECT.md`. This work is local and does not authorize publication.

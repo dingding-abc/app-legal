@@ -5,6 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const config = require('../assets/site-config.js');
+const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const basePages = [
   'index',
@@ -26,6 +27,14 @@ function checkResource(file, value) {
   if (fragment) {
     const content = fs.readFileSync(resolved, 'utf8');
     assert(content.includes(`id="${fragment}"`), `${path.relative(root, file)}: missing anchor ${value}`);
+  }
+}
+for (const [id, app] of Object.entries(apps)) {
+  for (const language of supported) {
+    const listing = app.locales[language];
+    assert(Boolean(listing?.name?.trim()), `${id}: missing ${language} store name`);
+    const url = new URL(listing.storeURL);
+    assert(url.protocol === 'https:' && url.hostname === 'apps.apple.com' && url.pathname.endsWith(`/id${app.storeId}`), `${id}: incorrect ${language} App Store destination`);
   }
 }
 for (const base of basePages) {
@@ -61,6 +70,11 @@ for (const base of basePages) {
     for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) checkResource(file, match[1]);
     if (home) {
       assert(!html.includes('apps/_template/'), `${relative}: template exposed on homepage`);
+      for (const [id, app] of Object.entries(apps)) {
+        for (const language of supported) assert(html.includes(app.locales[language].name), `${relative}: missing ${id} ${language} full name`);
+        assert(html.includes(`href="${app.locales[lang].storeURL}"`), `${relative}: wrong ${id} download destination`);
+        assert(html.includes(messages[lang].ui.downloadApp), `${relative}: download link label missing`);
+      }
       for (const page of ['privacy', 'terms', 'support']) {
         assert(html.includes(`./apps/alignerdiary/${fileFor(page, lang)}`), `${relative}: missing ${page} app link`);
       }
@@ -86,6 +100,7 @@ for (const base of basePages) {
         assert(!html.includes('AlignerDiary'), `${relative}: concrete app leaked into template`);
       }
       if (app) {
+        assert(html.includes(`<span class="badge">${apps.alignerdiary.locales[lang].name}</span>`), `${relative}: localized full app name missing`);
         assert(!/YOUR_EMAIL|LAST_UPDATED|APP_NAME/.test(html), `${relative}: template token in public document`);
         const identity = { en: 'independent developer', 'zh-Hans': '独立开发者', ja: '個人開発者' }[lang];
         assert(html.includes(identity), `${relative}: anonymous developer identity missing`);

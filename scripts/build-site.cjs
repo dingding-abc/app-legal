@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const config = require('../assets/site-config.js');
+const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const bodies = {
   'zh-Hans': require('../assets/locales/zh-Hans.js'),
@@ -33,9 +34,20 @@ function withLocaleLinks(html, locale) {
   if (locale === 'en') return html;
   return html.replace(/href="(\.\/(?:apps\/alignerdiary\/)?(?:index|privacy|terms|support))\.html"/g, (_, base) => `href="${base}.${locale}.html"`);
 }
-function replaceRequired(html, from, to) {
-  if (!html.includes(from)) throw Error(`Home source missing ${from}`);
-  return html.replaceAll(from, to);
+function appIdentity(id, locale) {
+  const app = apps[id];
+  const ui = messages[locale].ui;
+  if (!app) throw Error(`Unknown app: ${id}`);
+  const labels = { en: 'English', 'zh-Hans': '简体中文', ja: '日本語' };
+  const current = app.locales[locale];
+  const otherNames = supported.filter(language => language !== locale).map(language =>
+    `<div><dt lang="${language}">${labels[language]}</dt><dd lang="${language}">${esc(app.locales[language].name)}</dd></div>`).join('');
+  return `<div class="app-heading">
+            <h3 lang="${locale}">${esc(current.name)}</h3>
+            <p data-i18n="alignerDescription">${esc(ui.alignerDescription)}</p>
+            <dl class="app-names" aria-label="${esc(ui.appNames)}">${otherNames}</dl>
+            <a class="store-link" href="${esc(current.storeURL)}" target="_blank" rel="noopener noreferrer"><span>${esc(ui.downloadApp)}</span><span aria-hidden="true">↗</span></a>
+          </div>`;
 }
 function renderHome(source, locale) {
   const copy = messages[locale];
@@ -50,33 +62,14 @@ function renderHome(source, locale) {
     `<nav aria-label="${esc(ui.primaryNav)}"><a href="#apps">${esc(ui.apps)}</a><a href="#contact">${esc(ui.contact)}</a></nav>`);
   html = withLocaleLinks(html, locale);
   html = html.replace(/<div class="language-switcher"[^>]*>[\s\S]*?<\/div>/, switcher('index', locale, ui));
-  html = html.replace(/APP INFORMATION/, esc(ui.homeEyebrow));
-  html = html.replace(/<h1 id="page-title">[\s\S]*?<\/h1>/, `<h1 id="page-title">${esc(ui.heroLine1)}<br><span>${esc(ui.heroLine2)}</span></h1>`);
-  html = html.replace(/<p>Privacy, terms and support\.<br>Everything you need to know about the apps you use\.<\/p>/,
-    `<p>${esc(ui.heroIntro1)}<br>${esc(ui.heroIntro2)}</p>`);
-  html = html.replace(/Explore the collections(?= <span aria-hidden="true">↓)/, esc(ui.explore));
-  html = html.replace(/<span>Light<\/span>/, `<span>${esc(ui.light)}</span>`).replace(/<span>Smart<\/span>/, `<span>${esc(ui.smart)}</span>`);
-  html = html.replace(/<h2>App collections<\/h2>/, `<h2>${esc(ui.directoryHeading)}</h2>`);
-  html = html.replace(/<p>Find your app\. Get the details\.<\/p>/, `<p>${esc(ui.directoryCaption)}</p>`);
-  html = html.replace(/<h2 id="light-title">[\s\S]*?<\/h2>/, `<h2 id="light-title">${esc(ui.light)} <span class="series-label">${esc(ui.collection)}</span></h2>`);
-  html = html.replace(/<h2 id="smart-title">[\s\S]*?<\/h2>/, `<h2 id="smart-title">${esc(ui.smart)} <span class="series-label">${esc(ui.collection)}</span></h2>`);
-  html = html.replace(/<p>(?:Simple tools for everyday moments\.|Local-first tools for everyday moments\.)<\/p>/, `<p>${esc(ui.lightCaption)}</p>`);
-  html = html.replace(/<p>(?:A space for more focused tools\.|AI-powered tools, thoughtfully made\.)<\/p>/, `<p>${esc(ui.smartCaption)}</p>`);
-  html = html.replace(/<span class="collection-count">[^<]*<\/span>/, `<span class="collection-count">${esc(ui.oneApp)}</span>`);
-  html = html.replace(/<p>A personal record of your aligner journey\.<\/p>/, `<p>${esc(ui.alignerDescription)}</p>`);
-  html = html.replace(/<strong>Privacy Policy<\/strong>/, `<strong>${esc(ui.privacy)}</strong>`)
-    .replace(/<strong>Terms of Use<\/strong>/, `<strong>${esc(ui.terms)}</strong>`)
-    .replace(/<strong>Support<\/strong>/, `<strong>${esc(ui.support)}</strong>`);
-  html = html.replace(/<p>How your information is handled\.<\/p>/, `<p>${esc(ui.privacyCaption)}</p>`)
-    .replace(/<p>Guidelines for using the app\.<\/p>/, `<p>${esc(ui.termsCaption)}</p>`)
-    .replace(/<p>Contact details and help\.<\/p>/, `<p>${esc(ui.supportCaption)}</p>`);
-  html = html.replace(/<h3>No apps here yet\.<\/h3>/, `<h3>${esc(ui.emptyHeading)}</h3>`)
-    .replace(/<p>New app information will appear here when available\.<\/p>/, `<p>${esc(ui.emptyCopy)}</p>`)
-    .replace(/<span class="empty-label">ROOM TO GROW<\/span>/, `<span class="empty-label">${esc(ui.emptyLabel)}</span>`);
-  html = html.replace(/<span class="eyebrow">HERE TO HELP<\/span>/, `<span class="eyebrow">${esc(ui.hereToHelp)}</span>`)
-    .replace(/<h2 id="contact-title">A question about an app\?<\/h2>/, `<h2 id="contact-title">${esc(ui.contactHeading)}</h2>`)
-    .replace(/<p>Find contact details and practical help on its support page\.<\/p>/, `<p>${esc(ui.contactCopy)}</p>`)
-    .replace(/Get support(?= <span aria-hidden="true">↗)/, esc(ui.getSupport));
+  html = html.replace(/<!-- app-identity:([\w-]+):start -->[\s\S]*?<!-- app-identity:\1:end -->/g,
+    (_, id) => `<!-- app-identity:${id}:start -->\n          ${appIdentity(id, locale)}\n          <!-- app-identity:${id}:end -->`);
+  // Translation markers survive regeneration, so wording changes cannot break matching.
+  html = html.replace(/<(h[1-6]|p|span|strong)([^>]* data-i18n="([^"]+)"[^>]*)>[^<]*<\/\1>/g,
+    (_, tag, attributes, key) => {
+      if (!Object.hasOwn(ui, key) || typeof ui[key] !== 'string') throw Error(`Missing home copy: ${locale}/${key}`);
+      return `<${tag}${attributes}>${esc(ui[key])}</${tag}>`;
+    });
   html = html.replace(/<footer class="site-footer">[\s\S]*?<\/footer>/,
     `<footer class="site-footer"><div class="container"><strong>${esc(copy.title)}</strong><span>${esc(ui.footer)}</span></div></footer>`);
   if (!html.includes('assets/site-language.js')) html = html.replace('</body>', '<script src="./assets/site-language.js" defer></script>\n</body>');
@@ -104,9 +97,9 @@ function documentBody(source, app, page, locale) {
 function renderDoc(source, app, page, locale, body) {
   const copy = messages[locale];
   const ui = copy.ui;
-  const appName = app === 'template' ? 'APP_NAME' : 'AlignerDiary';
+  const appName = app === 'template' ? 'APP_NAME' : apps[app].locales[locale].name;
   const pageTitle = copy.page[page][0];
-  const description = app === 'template' ? `${pageTitle} · APP_NAME` : copy.page[page][1];
+  const description = `${pageTitle} · ${appName}`;
   const label = page === 'privacy' || page === 'terms'
     ? app === 'template' ? `${locale === 'en' ? 'Last updated: ' : locale === 'zh-Hans' ? '最后更新：' : '最終更新日：'}LAST_UPDATED` : ui.lastUpdated
     : app === 'template' ? ui.templateMeta : ui.lastUpdated;
@@ -118,6 +111,7 @@ function renderDoc(source, app, page, locale, body) {
   <meta name="description" content="${esc(description)}">
   <title>${esc(pageTitle)} · ${esc(appName)}</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/fonts/typefaces.css">
   <link rel="stylesheet" href="../../assets/style.css">
 </head>
 <body>

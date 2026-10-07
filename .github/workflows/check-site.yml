@@ -12,3 +12,4 @@ jobs:
           node-version-file: .node-version
       - run: node scripts/build-site.cjs --check
       - run: node scripts/check-site.cjs
+      - run: node scripts/update-fonts.cjs --check
