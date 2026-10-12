@@ -32,7 +32,7 @@ function switcher(name, locale, ui) {
 }
 function withLocaleLinks(html, locale) {
   if (locale === 'en') return html;
-  return html.replace(/href="(\.\/(?:apps\/alignerdiary\/)?(?:index|privacy|terms|support))\.html"/g, (_, base) => `href="${base}.${locale}.html"`);
+  return html.replace(/href="(\.\/(?:apps\/[\w-]+\/)?(?:index|privacy|terms|support))\.html"/g, (_, base) => `href="${base}.${locale}.html"`);
 }
 function appIdentity(id, locale) {
   const app = apps[id];
@@ -40,6 +40,7 @@ function appIdentity(id, locale) {
   if (!app) throw Error(`Unknown app: ${id}`);
   const labels = { en: 'English', 'zh-Hans': '简体中文', ja: '日本語' };
   const current = app.locales[locale];
+  if(app.status === 'testing') return `<div class="app-heading"><h3>${esc(current.name)}</h3><p>${esc(current.description)}</p></div>`;
   const otherNames = supported.filter(language => language !== locale).map(language =>
     `<div><dt lang="${language}">${labels[language]}</dt><dd lang="${language}">${esc(app.locales[language].name)}</dd></div>`).join('');
   return `<div class="app-heading">
@@ -90,7 +91,7 @@ function contactLinks(html) {
 function documentBody(source, app, page, locale) {
   let body = locale === 'en' ? extractEnglishBody(source) : bodies[locale]?.[app]?.[page];
   if (!body) throw Error(`Missing ${locale}/${app}/${page} body`);
-  if (app === 'alignerdiary') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)));
+  if (app !== 'template') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)));
   if (locale !== 'en') body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}"`);
   return body.trim();
 }
@@ -100,9 +101,10 @@ function renderDoc(source, app, page, locale, body) {
   const appName = app === 'template' ? 'APP_NAME' : apps[app].locales[locale].name;
   const pageTitle = copy.page[page][0];
   const description = `${pageTitle} · ${appName}`;
-  const label = page === 'privacy' || page === 'terms'
+  let label = page === 'privacy' || page === 'terms'
     ? app === 'template' ? `${locale === 'en' ? 'Last updated: ' : locale === 'zh-Hans' ? '最后更新：' : '最終更新日：'}LAST_UPDATED` : ui.lastUpdated
     : app === 'template' ? ui.templateMeta : ui.lastUpdated;
+  if(app !== 'template' && apps[app].policyUpdated) label = ({en:'Last updated: October 12, 2026','zh-Hans':'最后更新：2026年10月12日',ja:'最終更新日：2026年10月12日'})[locale];
   const docLink = (name, text) => `<a href="./${fileName(name, locale)}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
   return `<!doctype html>
 <html lang="${locale}">
@@ -119,7 +121,7 @@ function renderDoc(source, app, page, locale, body) {
 <header class="site-header"><div class="container inner">
   <a class="brand" href="../../${fileName('index', locale)}" aria-label="${esc(ui.brandHome)}">${brandMark}<span>${esc(copy.title)}</span></a>
   <div class="header-tools">
-    <nav aria-label="${esc(app === 'template' ? ui.templateNavDocs : ui.navDocs)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
+    <nav aria-label="${esc(app === 'template' ? ui.templateNavDocs : app === 'alignerdiary' ? ui.navDocs : appName)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
     ${switcher(page, locale, ui)}
   </div>
 </div></header>
@@ -137,7 +139,7 @@ function renderDoc(source, app, page, locale, body) {
 }
 
 for (const locale of supported) write(fileName('index', locale), renderHome(englishHome, locale));
-for (const app of ['alignerdiary', '_template']) {
+for (const app of [...Object.keys(apps), '_template']) {
   const key = app === '_template' ? 'template' : app;
   for (const page of ['privacy', 'terms', 'support']) {
     const source = fs.readFileSync(path.join(root, 'apps', app, `${page}.html`), 'utf8');

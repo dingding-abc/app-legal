@@ -1,3 +1,5 @@
+> 2026-10-12：朝暮有数新增中英日隐私／条款／支持共九页，与 AlignerDiary 在同站统一维护，目录 apps/keepaccounts。联系方式仍只来自 assets/site-config.js；三语内容与页面生成沿用现有流程。下方“只有 AlignerDiary／21页”为此前阶段；当前30页。新应用处于测试阶段，不提供虚构的商店下载链接。事实与验收见 KEEPACCOUNTS.md。
+
 # App Legal & Support
 
 面向 GitHub Pages 的静态应用政策与支持站。当前公开目录只有 AlignerDiary；首页还展示 Light 与 Smart 两个分类，Smart 明确标为暂无应用。站点提供英语、简体中文和日语完整页面，英语沿用原有 URL，另两种语言使用同目录 `.zh-Hans.html`、`.ja.html` 后缀。站内导航与语言链接均为相对地址，在域名根路径和仓库子路径下可用。

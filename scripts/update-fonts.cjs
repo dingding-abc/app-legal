@@ -17,7 +17,7 @@ const specs = [
   { locale: 'ja', family: 'Zen Maru Gothic', query: 'Zen Maru Gothic:wght@400;500;700', slug: 'zenmarugothic' },
 ];
 function corpus(locale) {
-  const pages = ['index', ...['alignerdiary', '_template'].flatMap(app => ['privacy', 'terms', 'support'].map(page => `apps/${app}/${page}`))];
+  const pages = ['index', ...['alignerdiary', 'keepaccounts', '_template'].flatMap(app => ['privacy', 'terms', 'support'].map(page => `apps/${app}/${page}`))];
   const text = pages.map(page => fs.readFileSync(path.join(root, `${page}${locale === 'en' ? '' : `.${locale}`}.html`), 'utf8')
     .replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')).join('');
   const ascii = Array.from({ length: 95 }, (_, i) => String.fromCharCode(i + 32)).join('');
@@ -34,11 +34,13 @@ function includesCharacter(face, char) {
   });
 }
 async function get(url) {
+  for(let attempt=0;attempt<3;attempt++)try{
   const response = await fetch(url, { signal: AbortSignal.timeout(60000), headers: {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
   } });
   if (!response.ok) throw Error(`${response.status}: ${new URL(url).hostname}`);
   return response;
+  }catch(error){if(attempt===2)throw error;await new Promise(resolve=>setTimeout(resolve,1000*(attempt+1)));}
 }
 async function main() {
   if (process.argv.includes('--check')) {
@@ -102,4 +104,4 @@ async function main() {
   fs.writeFileSync(path.join(fontDir, 'typefaces.css'), `/* Local font subsets; see SOURCE.md and font-manifest.json. */\n${rules.join('\n\n')}\n`);
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 }
-main().catch(error => { console.error(error.message); process.exitCode = 1; });
+main().catch(error => { console.error(error.message, error.cause?.code); process.exitCode = 1; });

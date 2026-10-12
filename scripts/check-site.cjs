@@ -9,6 +9,7 @@ const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const basePages = [
   'index',
+  'apps/keepaccounts/privacy', 'apps/keepaccounts/terms', 'apps/keepaccounts/support',
   'apps/alignerdiary/privacy', 'apps/alignerdiary/terms', 'apps/alignerdiary/support',
   'apps/_template/privacy', 'apps/_template/terms', 'apps/_template/support',
 ];
@@ -33,6 +34,7 @@ for (const [id, app] of Object.entries(apps)) {
   for (const language of supported) {
     const listing = app.locales[language];
     assert(Boolean(listing?.name?.trim()), `${id}: missing ${language} store name`);
+    if(app.status === 'testing'){assert(!listing.storeURL, `${id}: testing app must not invent a download URL`);continue;}
     const url = new URL(listing.storeURL);
     assert(url.protocol === 'https:' && url.hostname === 'apps.apple.com' && url.pathname.endsWith(`/id${app.storeId}`), `${id}: incorrect ${language} App Store destination`);
   }
@@ -72,7 +74,7 @@ for (const base of basePages) {
       assert(!html.includes('apps/_template/'), `${relative}: template exposed on homepage`);
       for (const [id, app] of Object.entries(apps)) {
         for (const language of supported) assert(html.includes(app.locales[language].name), `${relative}: missing ${id} ${language} full name`);
-        assert(html.includes(`href="${app.locales[lang].storeURL}"`), `${relative}: wrong ${id} download destination`);
+        if(app.status !== 'testing') assert(html.includes(`href="${app.locales[lang].storeURL}"`), `${relative}: wrong ${id} download destination`);
         assert(html.includes(messages[lang].ui.downloadApp), `${relative}: download link label missing`);
       }
       for (const page of ['privacy', 'terms', 'support']) {
@@ -80,7 +82,7 @@ for (const base of basePages) {
       }
       assert(html.includes(`href="./apps/alignerdiary/${fileFor('support', lang)}"`), `${relative}: support CTA loses language`);
       assert(html.includes(messages[lang].ui.smartCaption), `${relative}: smart description mismatch`);
-      assert(html.includes(messages[lang].ui.emptyHeading), `${relative}: empty smart status missing`);
+      for(const page of ['privacy','terms','support'])assert(html.includes(`./apps/keepaccounts/${fileFor(page,lang)}`), `${relative}: missing bookkeeping document`);
     } else {
       assert(count(html, /<h2\b/g) === expectedSections, `${relative}: section count drift`);
       const body = html.match(/<!-- article-body:start -->([\s\S]*?)<!-- article-body:end -->/)?.[1] || '';
@@ -98,6 +100,12 @@ for (const base of basePages) {
           : kind === 'terms' ? ['APP_NAME', 'LAST_UPDATED', 'YOUR_EMAIL', 'APP_PURPOSE'] : ['APP_NAME', 'YOUR_EMAIL'];
         for (const token of tokens) assert(html.includes(token), `${relative}: lost ${token}`);
         assert(!html.includes('AlignerDiary'), `${relative}: concrete app leaked into template`);
+      }
+      if(base.startsWith('apps/keepaccounts/')){
+        assert(html.includes(config.contactEmail), relative+': missing contact');
+        assert(!/YOUR_EMAIL|LAST_UPDATED|APP_NAME|{{EMAIL}}/.test(html),relative+': placeholder leaked');
+        assert(html.includes(lang==='en'?'October 12, 2026':'2026年10月12日'),relative+': wrong date');
+        assert(html.includes('朝暮有数'),relative+': wrong app');
       }
       if (app) {
         assert(html.includes(`<span class="badge">${apps.alignerdiary.locales[lang].name}</span>`), `${relative}: localized full app name missing`);

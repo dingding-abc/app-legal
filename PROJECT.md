@@ -1,3 +1,5 @@
+> 2026-10-12：朝暮有数新增中英日隐私／条款／支持共九页，与 AlignerDiary 在同站统一维护，目录 apps/keepaccounts。联系方式仍只来自 assets/site-config.js；三语内容与页面生成沿用现有流程。下方“只有 AlignerDiary／21页”为此前阶段；当前30页。新应用处于测试阶段，不提供虚构的商店下载链接。事实与验收见 KEEPACCOUNTS.md。
+
 # App Legal & Support · 项目档案
 
 - 类型：面向 GitHub Pages 的纯静态网站。访客端只有 HTML/CSS/SVG/本地字体和渐进式语言偏好脚本；没有后端、数据库、框架或远程运行依赖。
