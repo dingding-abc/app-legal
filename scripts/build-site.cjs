@@ -40,14 +40,13 @@ function appIdentity(id, locale) {
   if (!app) throw Error(`Unknown app: ${id}`);
   const labels = { en: 'English', 'zh-Hans': '简体中文', ja: '日本語' };
   const current = app.locales[locale];
-  if(app.status === 'testing') return `<div class="app-heading"><h3>${esc(current.name)}</h3><p>${esc(current.description)}</p></div>`;
   const otherNames = supported.filter(language => language !== locale).map(language =>
     `<div><dt lang="${language}">${labels[language]}</dt><dd lang="${language}">${esc(app.locales[language].name)}</dd></div>`).join('');
   return `<div class="app-heading">
             <h3 lang="${locale}">${esc(current.name)}</h3>
-            <p data-i18n="alignerDescription">${esc(ui.alignerDescription)}</p>
+            <p${id === 'alignerdiary' ? ' data-i18n="alignerDescription"' : ''}>${esc(current.description || ui.alignerDescription)}</p>
             <dl class="app-names" aria-label="${esc(ui.appNames)}">${otherNames}</dl>
-            <a class="store-link" href="${esc(current.storeURL)}" target="_blank" rel="noopener noreferrer"><span>${esc(ui.downloadApp)}</span><span aria-hidden="true">↗</span></a>
+            ${current.storeURL ? `<a class="store-link" href="${esc(current.storeURL)}" target="_blank" rel="noopener noreferrer"><span>${esc(ui.downloadApp)}</span><span aria-hidden="true">↗</span></a>` : `<span class="store-link" aria-disabled="true"><span>${esc(ui.downloadApp)}</span><span>${esc(({en:'Not released','zh-Hans':'测试中',ja:'テスト中'})[locale])}</span></span>`}
           </div>`;
 }
 function renderHome(source, locale) {

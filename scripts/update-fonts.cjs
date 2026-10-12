@@ -34,6 +34,11 @@ function includesCharacter(face, char) {
   });
 }
 async function get(url) {
+  // Reuse only unchanged, previously verified downloads from the same recorded URL.
+  if(fs.existsSync(manifestPath)){
+    const existing=JSON.parse(fs.readFileSync(manifestPath,'utf8')).flatMap(entry=>entry.files).find(file=>file.url===url);
+    if(existing&&fs.existsSync(path.join(fontDir,existing.name))){const bytes=fs.readFileSync(path.join(fontDir,existing.name));if(hash(bytes)===existing.sha256)return new Response(bytes);}
+  }
   for(let attempt=0;attempt<3;attempt++)try{
   const response = await fetch(url, { signal: AbortSignal.timeout(60000), headers: {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
