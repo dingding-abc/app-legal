@@ -8,6 +8,7 @@ module.exports = Object.freeze({
   alignerdiary: {
     storeId: '6811375012',
     bundleId: 'com.dzy.alignerdiary',
+    policyUpdated: '2026-11-12',
     verifiedOn: '2026-10-07',
     locales: {
       en: {

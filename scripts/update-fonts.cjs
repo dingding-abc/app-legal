@@ -52,8 +52,24 @@ async function main() {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
     const css = fs.readFileSync(path.join(fontDir, 'typefaces.css'), 'utf8');
     const expected = manifest.flatMap(entry => entry.files.map(file => `./${file.name}`));
-    const references = [...css.matchAll(/url\(([^)]+)\)/g)].map(match => match[1]);
-    if (references.length !== expected.length || references.some(file => !expected.includes(file)) || expected.some(file => !references.includes(file))) throw Error('Local font stylesheet references have drifted');
+    // Compare local resource paths independently from their content-version query.
+    const references = [...css.matchAll(/url\((['"]?)([^)'"\s]+)\1\)/g)].map(match => {
+      const raw = match[2];
+      const parsed = new URL(raw, 'https://local-font.invalid/');
+      const keys = [...parsed.searchParams.keys()];
+      const version = parsed.searchParams.get('v');
+      if (!raw.startsWith('./') || parsed.origin !== 'https://local-font.invalid' || parsed.hash ||
+          keys.length !== 1 || keys[0] !== 'v' || !/^[a-f0-9]{12}$/.test(version || '')) {
+        throw Error(`Invalid local font cache version: ${raw}`);
+      }
+      return { file: `.${parsed.pathname}`, version };
+    });
+    const paths = references.map(reference => reference.file);
+    if (paths.length !== expected.length || paths.some(file => !expected.includes(file)) || expected.some(file => !paths.includes(file))) throw Error('Local font stylesheet references have drifted');
+    for (const reference of references) {
+      const actual = hash(fs.readFileSync(path.join(fontDir, reference.file.slice(2))));
+      if (reference.version !== actual.slice(0, 12)) throw Error(`Local font cache version mismatch: ${reference.file}`);
+    }
     for (const spec of specs) {
       const entry = manifest.find(item => item.locale === spec.locale && item.family === spec.family);
       if (!entry) throw Error(`Missing font: ${spec.family}`);
@@ -95,8 +111,9 @@ async function main() {
       if (bytes.subarray(0, 4).toString() !== 'wOF2') throw Error('Expected WOFF2 font');
       const name = spec.sourceBase ? path.posix.basename(new URL(url).pathname) : `${spec.slug}-${index + 1}.woff2`;
       pending.push({ name, bytes });
-      files.push({ name, sha256: hash(bytes), bytes: bytes.length, url });
-      rules.push(face.replace(src[0], `url(./${name})`));
+      const sha256 = hash(bytes);
+      files.push({ name, sha256, bytes: bytes.length, url });
+      rules.push(face.replace(src[0], `url(./${name}?v=${sha256.slice(0, 12)})`));
     }
     const licenseURL = spec.sourceBase ? new URL('OFL.txt', spec.sourceBase).href : `https://raw.githubusercontent.com/google/fonts/main/ofl/${spec.slug}/OFL.txt`;
     const license = await (await get(licenseURL)).text();
