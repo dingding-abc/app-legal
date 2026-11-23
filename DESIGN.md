@@ -1,8 +1,8 @@
 # App Legal & Support — design specification
 
-Updated October 7, 2026. The requested direction combines a recognizable independent-app identity with practical document navigation. English, Chinese and Japanese each use a deliberately chosen local typeface.
+Updated November 23, 2026. The current homepage is a compact directory for app privacy, terms and support. The earlier editorial design and multilingual document decisions are retained below as dated context.
 
-## References and interpretation
+## Original visual references · October 7, 2026
 
 The following public Figma Community previews were inspected in the browser:
 
@@ -12,7 +12,7 @@ The following public Figma Community previews were inspected in the browser:
 
 These inform proportions, hierarchy and contrast. The notebook illustration, site markup and styles are original to this project; no template images or design files were copied.
 
-## Visual system
+## Original visual system · October 7, 2026
 
 - Cream paper `#f5f4ee`, off-white content `#fffefa`, deep ink `#263e32`, accent `#355c43`, a small amount of lime `#d5e79a`.
 - Wide opening with the title on the left and a short explanation on the right, separated by a fine rule.
@@ -22,14 +22,14 @@ These inform proportions, hierarchy and contrast. The notebook illustration, sit
 - All fonts are bundled locally. See `assets/fonts/SOURCE.md` for licenses, source snapshots and subset maintenance.
 - Overall width: 1080 px. Reading column: 760 px. Use a single 16 px rounded app panel, without nested cards or broad shadows.
 
-## Homepage
+## Homepage · November 23, 2026
 
-1. Compact masthead, document mark, section links, and visible active language.
-2. A two-line handbook title and a factual description of the documents. The browse link leads directly to the app directory.
-3. Light category header. One featured AlignerDiary panel: a deep-green illustrated notebook cover on the left; the exact localized App Store title, the other two language titles, a direct App Store download link, and three numbered document links on the right. All three titles remain visible without JavaScript, truncation or tooltips. Names use their own language typefaces. The cover is decorative, not a representation of the app interface or an official app icon.
-4. Smart is a compact category row with an explicit no-apps message. Do not invent a launch date or future product.
-5. Contact offers the same-language AlignerDiary support link, with a modest lime accent.
-6. Small footer with the existing independent-developer wording.
+- The page heading, language disclosure, two app sections and contact share the document reading width and established cream and green colors. Each app lists Privacy, Terms and Support as adjacent links. Short widths wrap controls while preserving their 44 px targets. The former handbook headline, illustrations and categories were removed.
+- AlignerDiary shows the verified app name and store link for English, Simplified Chinese and Japanese. The other eight locales show the AlignerDiary brand, with the verified US listing for the same app ID. 朝暮有数 shows a localized testing status and three document links. Unsupported document languages receive a nearby English fallback note.
+- The homepage reuses the native language disclosure. Its 11 autonyms have static links, the active choice is marked, and the overlay is scrollable without reflowing the directory. Arabic uses right-to-left layout and isolates app names and the contact email. Document return links preserve each AlignerDiary locale. The English homepage selection and English 朝暮有数 fallbacks explicitly beat a saved preference.
+- The page and links can be used with JavaScript disabled. The shared enhancement remembers language selection and closes the menu on Escape, outside click or browser history restoration. Main CSS and the font stylesheet use content versions on the homepage.
+
+Research opened November 23, 2026. The GOV.UK component demonstrates a consistent location and identifiable current language; its examples cover a smaller locale list. Smashing Magazine’s design article describes discoverable placement and honoring the visitor’s explicit choice; its examples do not verify this site's focus behavior. USWDS collection guidance informs the title-and-related-links structure used for each app. The implementation reuses the existing disclosure and local styles. [GOV.UK language navigation](https://design-system.service.gov.uk/components/language-navigation/), [Designing a better language selector](https://www.smashingmagazine.com/2022/05/designing-better-language-selector/), [USWDS collection](https://designsystem.digital.gov/components/collection/).
 
 ## Documents and templates
 
@@ -37,7 +37,7 @@ Keep the reading column open. Use the matching language typeface, the full local
 
 Formal content and September 20, 2026 dates remain unchanged. The contact address is maintained only in `assets/site-config.js`. The template is never listed on the homepage.
 
-## Responsive and accessible behavior
+## Original responsive and accessible behavior · October 7, 2026
 
 - Below 680 px, the introduction stacks and the app cover becomes a compact horizontal illustration above the document index. Outer gutters are 20 px.
 - Tune each language title separately. Keep all descriptions available, wrap long text and avoid horizontal scrolling at 320/375 px.
@@ -47,7 +47,7 @@ Formal content and September 20, 2026 dates remain unchanged. The contact addres
 
 ## Maintenance and validation
 
-The homepage structure lives in `index.html`; text-only `data-i18n` elements are generated from `assets/i18n.js`. Document bodies retain their existing authority and generation direction. Run the normal build and site checks, plus the offline font check. Font updates require network access only when the maintained content adds characters beyond the bundled subset.
+The homepage structure lives in `scripts/build-site.cjs`. Shared language chrome and additional homepage copy live in `assets/aligner-languages.js` and `assets/home-copy.js`. All homepages, including `index.html`, are generated. Document bodies retain their existing authority and generation direction. Run the normal build and site checks, plus the offline font check. Font updates require network access only when the maintained content adds characters beyond the bundled subset.
 
 Check desktop, 375 px and 320 px pages, actual font readiness, keyboard navigation, language switching and repository-prefix navigation. Record actual results in `PROJECT.md`. This work is local and does not authorize publication.
 

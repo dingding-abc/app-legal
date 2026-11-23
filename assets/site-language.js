@@ -12,7 +12,8 @@
   const explicitEnglish = /(?:\?|&)lang=en(?:&|$)/.test(location.search || '');
   // AlignerDiary's original English URL is explicit too. A failed preference write
   // must never bounce an English click back to an older saved language.
-  const explicitLocale = menus.length > 0 || hasExplicitSuffix || explicitEnglish;
+  const isDocumentMenu = menus.length > 0 && !document.body.classList.contains('home-page');
+  const explicitLocale = isDocumentMenu || hasExplicitSuffix || explicitEnglish;
   if (!explicitLocale && saved && saved !== current) {
     const target = links.find(link => link.dataset.language === saved);
     if (target) { location.replace(target.href); return; }

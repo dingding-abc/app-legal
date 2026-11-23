@@ -8,15 +8,14 @@ const config = require('../assets/site-config.js');
 const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const alignerLanguages = require('../assets/aligner-languages.js');
+const homeCopy = require('../assets/home-copy.js');
 let alignerBodies; // Loaded only when AlignerDiary generation begins.
 const bodies = {
   'zh-Hans': require('../assets/locales/zh-Hans.js'),
   ja: require('../assets/locales/ja.js'),
 };
 const checkOnly = process.argv.includes('--check');
-const englishHome = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const brandMark = englishHome.match(/<svg class="brand-mark"[\s\S]*?<\/svg>/)?.[0];
-if (!brandMark) throw Error('Home brand mark missing');
+const brandMark = "<svg class=\"brand-mark\" aria-hidden=\"true\" viewBox=\"0 0 24 28\" fill=\"none\"><path d=\"M5 2h10l5 5v19H5V2ZM15 2v6h5M9 13h7M9 18h7\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/></svg>";
 
 function esc(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -31,23 +30,26 @@ function write(relative, content) {
   } else if (!unchanged) fs.writeFileSync(target, content, 'utf8');
   console.log(`${checkOnly ? 'checked' : unchanged ? 'unchanged' : 'wrote'} ${relative}`);
 }
-// Bind new AlignerDiary HTML to the exact current asset bytes, including cached visits.
+// Bind the homepages and AlignerDiary documents to the exact current asset bytes, including cached visits.
 // Cache per generation; font maintenance must finish, then rerun generation.
 const assetVersions = new Map();
-function versionedAsset(relative) {
+function versionedAsset(relative, prefix = '../../') {
   if (!assetVersions.has(relative)) {
     const digest = createHash('sha256').update(fs.readFileSync(path.join(root, 'assets', relative))).digest('hex').slice(0, 12);
-    assetVersions.set(relative, `../../assets/${relative}?v=${digest}`);
+    assetVersions.set(relative, digest);
   }
-  return assetVersions.get(relative);
+  return `${prefix}assets/${relative}?v=${assetVersions.get(relative)}`;
 }
-function switcher(name, locale, ui) {
+function switcher(name, locale, ui, explicitEnglish = false) {
   const labels = { en: 'English', 'zh-Hans': '简体中文', ja: '日本語' };
-  return `<div class="language-switcher" role="group" aria-label="${esc(ui.languageLabel)}">${supported.map((id) => `<a data-language-link data-language="${id}" href="./${fileName(name, id)}" hreflang="${id}" lang="${id}"${id === locale ? ' aria-current="page"' : ''}>${labels[id]}</a>`).join('')}</div>`;
+  return `<div class="language-switcher" role="group" aria-label="${esc(ui.languageLabel)}">${supported.map((id) => `<a data-language-link data-language="${id}" href="./${fileName(name, id)}${explicitEnglish && id === 'en' ? '?lang=en' : ''}" hreflang="${id}" lang="${id}"${id === locale ? ' aria-current="page"' : ''}>${labels[id]}</a>`).join('')}</div>`;
 }
-function alignerSwitcher(name, locale, ui) {
+function languageMenu(name, locale, ui) {
   const globe = '<svg class="language-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></svg>';
-  const links = alignerLanguages.supported.map(id => `<a data-language-link data-language="${id}" href="./${fileName(name, id)}" hreflang="${id}" lang="${id}" dir="${id === 'ar' ? 'rtl' : 'ltr'}"${id === locale ? ' aria-current="page"' : ''}>${esc(alignerLanguages.labels[id])}</a>`).join('');
+  const links = alignerLanguages.supported.map(id => {
+    const href = name === 'index' ? homeHref(id) : `./${fileName(name, id)}`;
+    return `<a data-language-link data-language="${id}" href="${href}" hreflang="${id}" lang="${id}" dir="${id === 'ar' ? 'rtl' : 'ltr'}"${id === locale ? ' aria-current="page"' : ''}>${esc(alignerLanguages.labels[id])}</a>`;
+  }).join('');
   return `<details class="language-menu" data-language-menu><summary data-language-summary>${globe}<span>${esc(ui.languageLabel)}${locale === 'en' ? '' : ' <bdi lang="en" dir="ltr">/ Language</bdi>'}</span><bdi lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">${esc(alignerLanguages.labels[locale])}</bdi><svg class="language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="m4 6 4 4 4-4"/></svg></summary><nav class="language-menu-panel" aria-label="${esc(ui.languageLabel)}">${links}</nav></details>`;
 }
 function alignerContent() {
@@ -65,50 +67,58 @@ function alignerContent() {
   }
   return alignerBodies;
 }
-function withLocaleLinks(html, locale) {
-  if (locale === 'en') return html;
-  return html.replace(/href="(\.\/(?:apps\/[\w-]+\/)?(?:index|privacy|terms|support))\.html"/g, (_, base) => `href="${base}.${locale}.html"`);
+function homeHref(locale, prefix = './') {
+  return prefix + fileName('index', locale) + (locale === 'en' ? '?lang=en' : '');
 }
-function appIdentity(id, locale) {
-  const app = apps[id];
-  const ui = messages[locale].ui;
-  if (!app) throw Error(`Unknown app: ${id}`);
-  const labels = { en: 'English', 'zh-Hans': '简体中文', ja: '日本語' };
-  const current = app.locales[locale];
-  const otherNames = supported.filter(language => language !== locale).map(language =>
-    `<div><dt lang="${language}">${labels[language]}</dt><dd lang="${language}">${esc(app.locales[language].name)}</dd></div>`).join('');
-  return `<div class="app-heading">
-            <h3 lang="${locale}">${esc(current.name)}</h3>
-            <p${id === 'alignerdiary' ? ' data-i18n="alignerDescription"' : ''}>${esc(current.description || ui.alignerDescription)}</p>
-            <dl class="app-names" aria-label="${esc(ui.appNames)}">${otherNames}</dl>
-            ${current.storeURL ? `<a class="store-link" href="${esc(current.storeURL)}" target="_blank" rel="noopener noreferrer"><span>${esc(ui.downloadApp)}</span><span aria-hidden="true">↗</span></a>` : `<span class="store-link" aria-disabled="true"><span>${esc(ui.downloadApp)}</span><span>${esc(({en:'Not released','zh-Hans':'测试中',ja:'テスト中'})[locale])}</span></span>`}
-          </div>`;
+function renderHomeApp(id, locale, copy) {
+  const isAligner = id === 'alignerdiary';
+  const listing = apps[id].locales[locale];
+  const documentLocale = isAligner || listing ? locale : 'en';
+  const englishFallback = documentLocale !== locale;
+  const { testing, fallback } = homeCopy[locale];
+  const note = [apps[id].status === 'testing' ? testing : '', englishFallback ? fallback : ''].filter(Boolean).join(' · ');
+  const name = listing?.name || (isAligner ? 'AlignerDiary' : apps[id].locales.en.name);
+  const nameLanguage = isAligner ? (listing ? locale : 'en') : 'zh-Hans';
+  const storeURL = isAligner ? (listing?.storeURL || apps[id].locales.en.storeURL) : null;
+  const labels = { privacy: copy.ui.privacyShort, terms: copy.ui.termsShort, support: copy.ui.supportShort };
+  const links = Object.entries(labels).map(([page, label]) => {
+    const href = './apps/' + id + '/' + fileName(page, documentLocale) + (!isAligner && documentLocale === 'en' ? '?lang=en' : '');
+    return `<li><a href="${href}" hreflang="${documentLocale}">${esc(label)}</a></li>`;
+  }).join('');
+  return `    <section class="home-app" aria-labelledby="${id}">
+      <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n      <p class="home-app-note" id="keepaccounts-note">' + esc(note) + '</p>' : ''}
+      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="keepaccounts-note"' : ''}><ul>${links}${storeURL ? '<li><a href="' + esc(storeURL) + '">App Store</a></li>' : ''}</ul></nav>
+    </section>`;
 }
-function renderHome(source, locale) {
-  const copy = messages[locale];
-  const ui = copy.ui;
-  let html = source.replace(/<html lang="[^"]+">/, `<html lang="${locale}">`);
-  html = html.replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(copy.homeDescription)}">`);
-  html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(copy.title)}</title>`);
-  html = html.replace(/<a class="skip-link" href="#main-content">[^<]*<\/a>/, `<a class="skip-link" href="#main-content">${esc(ui.skip)}</a>`);
-  html = html.replace(/aria-label="App Legal &amp; Support home"/, `aria-label="${esc(ui.brandHome)}"`);
-  html = html.replace(/<span>App Legal &amp; Support<\/span>/, `<span>${esc(copy.title)}</span>`);
-  html = html.replace(/<nav aria-label="Primary navigation"><a href="#apps">[^<]*<\/a><a href="#contact">[^<]*<\/a><\/nav>/,
-    `<nav aria-label="${esc(ui.primaryNav)}"><a href="#apps">${esc(ui.apps)}</a><a href="#contact">${esc(ui.contact)}</a></nav>`);
-  html = withLocaleLinks(html, locale);
-  html = html.replace(/<div class="language-switcher"[^>]*>[\s\S]*?<\/div>/, switcher('index', locale, ui));
-  html = html.replace(/<!-- app-identity:([\w-]+):start -->[\s\S]*?<!-- app-identity:\1:end -->/g,
-    (_, id) => `<!-- app-identity:${id}:start -->\n          ${appIdentity(id, locale)}\n          <!-- app-identity:${id}:end -->`);
-  // Translation markers survive regeneration, so wording changes cannot break matching.
-  html = html.replace(/<(h[1-6]|p|span|strong)([^>]* data-i18n="([^"]+)"[^>]*)>[^<]*<\/\1>/g,
-    (_, tag, attributes, key) => {
-      if (!Object.hasOwn(ui, key) || typeof ui[key] !== 'string') throw Error(`Missing home copy: ${locale}/${key}`);
-      return `<${tag}${attributes}>${esc(ui[key])}</${tag}>`;
-    });
-  html = html.replace(/<footer class="site-footer">[\s\S]*?<\/footer>/,
-    `<footer class="site-footer"><div class="container"><strong>${esc(copy.title)}</strong><span>${esc(ui.footer)}</span></div></footer>`);
-  if (!html.includes('assets/site-language.js')) html = html.replace('</body>', '<script src="./assets/site-language.js" defer></script>\n</body>');
-  return html.replace(/\r\n/g, '\n');
+function renderHome(locale) {
+  const copy = alignerLanguages.messages[locale];
+  const contact = homeCopy[locale].contact;
+  return `<!doctype html>
+<html lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="${esc(copy.title)}">
+  <title>${esc(copy.title)}</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="${versionedAsset('fonts/typefaces.css', './')}">
+  <link rel="stylesheet" href="${versionedAsset('style.css', './')}">
+</head>
+<body class="home-page">
+<a class="skip-link" href="#main-content">${esc(copy.ui.skip)}</a>
+<main class="home-shell" id="main-content" tabindex="-1">
+  <header class="home-header">
+    ${languageMenu('index', locale, copy.ui)}
+    <h1>${esc(copy.title)}</h1>
+  </header>
+${Object.keys(apps).sort().map(id => renderHomeApp(id, locale, copy)).join('\n')}
+</main>
+<footer class="home-shell home-contact">
+  <span>${esc(contact)}</span>
+  <a data-contact-email dir="ltr" href="mailto:${esc(config.contactEmail)}"><bdi dir="ltr">${esc(config.contactEmail)}</bdi></a>
+</footer>
+<script src="${versionedAsset('site-language.js', './')}" defer></script>
+</body></html>
+`;
 }
 function extractEnglishBody(source) {
   const marked = source.match(/<!-- article-body:start -->([\s\S]*?)<!-- article-body:end -->/);
@@ -129,18 +139,19 @@ function documentBody(source, app, page, locale) {
   let body = app === 'alignerdiary' ? alignerContent()[locale]?.[page] : locale === 'en' ? extractEnglishBody(source) : bodies[locale]?.[app]?.[page];
   if (!body) throw Error(`Missing ${locale}/${app}/${page} body`);
   if (app !== 'template') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)), app === 'alignerdiary');
-  if (locale !== 'en') body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}"`);
-  return body.trim();
+  if (locale !== 'en' || app === 'keepaccounts') {
+    const explicitEnglish = app === 'keepaccounts' && locale === 'en' ? '?lang=en' : '';
+    body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}${explicitEnglish}"`);
+  }
+  return body.replace(/\r\n/g, '\n').trim();
 }
-function renderDoc(source, app, page, locale, body) {
+function renderDoc(app, page, locale, body) {
   const isAligner = app === 'alignerdiary';
   const copy = isAligner ? alignerLanguages.messages[locale] : messages[locale];
   const ui = copy.ui;
-  const homeLocale = supported.includes(locale) ? locale : 'en';
-  // Extra locales explicitly link to English; the query also beats a saved preference.
-  const homeFile = fileName('index', homeLocale) + (homeLocale !== locale ? '?lang=en' : '');
-  const homeLabel = homeLocale === locale ? ui.allApps : ui.allAppsEnglish;
-  const homeAria = homeLocale === locale ? ui.brandHome : ui.brandHomeEnglish;
+  const homeFile = app === 'template' ? '../../' + fileName('index', locale) : homeHref(locale, '../../');
+  const homeLabel = ui.allApps;
+  const homeAria = ui.brandHome;
   const appName = app === 'template' ? 'APP_NAME' : isAligner ? (apps[app].locales[locale]?.name || 'AlignerDiary') : apps[app].locales[locale].name;
   const pageTitle = copy.page[page][0];
   const description = `${pageTitle} · ${appName}`;
@@ -160,7 +171,7 @@ function renderDoc(source, app, page, locale, body) {
     const formatted = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(date + 'T00:00:00Z'));
     labelMarkup = esc(ui.lastUpdated).replace('{date}', `<time datetime="${date}">${esc(formatted)}</time>`);
   }
-  const docLink = (name, text) => `<a href="./${fileName(name, locale)}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
+  const docLink = (name, text) => `<a href="./${fileName(name, locale)}${app === 'keepaccounts' && locale === 'en' ? '?lang=en' : ''}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
   return `<!doctype html>
 <html lang="${locale}"${isAligner ? ` dir="${locale === 'ar' ? 'rtl' : 'ltr'}"` : ''}>
 <head>
@@ -174,13 +185,13 @@ function renderDoc(source, app, page, locale, body) {
 <body${isAligner ? ' class="aligner-doc"' : ''}>
 <a class="skip-link" href="#main-content">${esc(ui.skip)}</a>
 <header class="site-header"><div class="container inner">
-  <a class="brand" href="../../${homeFile}" aria-label="${esc(homeAria)}">${brandMark}<span>${esc(copy.title)}</span></a>
-  <div class="header-tools">${isAligner ? `\n    ${alignerSwitcher(page, locale, ui)}` : ''}
+  <a class="brand" href="${homeFile}" aria-label="${esc(homeAria)}">${brandMark}<span>${esc(copy.title)}</span></a>
+  <div class="header-tools">${isAligner ? `\n    ${languageMenu(page, locale, ui)}` : ''}
     <nav aria-label="${esc(app === 'template' ? ui.templateNavDocs : app === 'alignerdiary' ? ui.navDocs : appName)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
-    ${isAligner ? '' : switcher(page, locale, ui)}
+    ${isAligner ? '' : switcher(page, locale, ui, app === 'keepaccounts')}
   </div>
 </div></header>
-<div class="article-shell"><div class="breadcrumb"><a href="../../${homeFile}"><span${isAligner ? ' class="back-arrow"' : ''} aria-hidden="true">←</span> ${esc(homeLabel)}</a></div>
+<div class="article-shell"><div class="breadcrumb"><a href="${homeFile}"><span${isAligner ? ' class="back-arrow"' : ''} aria-hidden="true">←</span> ${esc(homeLabel)}</a></div>
 <main id="main-content" class="article">
   <span class="badge">${isAligner ? `<bdi dir="auto">${esc(appName)}</bdi>` : esc(appName)}</span><h1>${esc(pageTitle)}</h1><div class="meta">${labelMarkup}</div>
   <!-- article-body:start -->
@@ -195,7 +206,10 @@ function renderDoc(source, app, page, locale, body) {
 
 // Validate the new authority before writing outputs; incomplete translations fail closed.
 alignerContent();
-for (const locale of supported) write(fileName('index', locale), renderHome(englishHome, locale));
+for (const locale of alignerLanguages.supported) {
+  if (!homeCopy[locale]?.contact || !homeCopy[locale]?.testing || (!supported.includes(locale) && !homeCopy[locale]?.fallback)) throw Error('Missing homepage copy: ' + locale);
+  write(fileName('index', locale), renderHome(locale));
+}
 for (const app of [...Object.keys(apps), '_template']) {
   const key = app === '_template' ? 'template' : app;
   for (const page of ['privacy', 'terms', 'support']) {
@@ -203,7 +217,7 @@ for (const app of [...Object.keys(apps), '_template']) {
     const englishBody = documentBody(source, key, page, 'en');
     for (const locale of key === 'alignerdiary' ? alignerLanguages.supported : supported) {
       const body = locale === 'en' ? englishBody : documentBody(source, key, page, locale);
-      const out = renderDoc(source, key, page, locale, body);
+      const out = renderDoc(key, page, locale, body);
       write(path.join('apps', app, fileName(page, locale)), out);
     }
   }

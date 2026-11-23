@@ -1,3 +1,5 @@
+> 2026-11-23 首页现为双应用文档目录。首页对应 AlignerDiary 的 11 种语言；朝暮有数在其余八种首页语言提示使用英语文档。当前生成总数 62。下方带日期的记录描述当时范围。
+
 > 2026-11-12 本地准备：AlignerDiary 简明政策与支持扩为 11 语言（33 页），当前全部输出共 54 页；用户提供 1.2.0 已审核通过事实。共通 1.9.31 核心、UI 与现有语言偏好涉及的 DATA 已由本技术会话实际读取并显式 ack，严格门禁通过；该状态不代表产品验收。未提交／推送／部署；最终测试和浏览器独立验收另行记录。
 
 > 2026-10-26：AlignerDiary 中英日隐私／条款／支持已按当前 SDK58 真实实现准备本地同步，日期仅九份受影响文档更新为2026-10-26。补充主动30天免费试用、一次终身购买、旧生产原始build≤85.2资格、到期保留与限制、Keychain及Widget最小访问状态、相册另存和计划／全部数据清除边界。日期由 assets/app-catalog.js 的每App policyUpdated 生成；keepaccounts 与模板正文／日期保持原样。下文9月20日保护描述为此前内容基线，本次变更由当前发布准备范围明确授权。尚未部署、未经法律或母语审校，浏览器本轮未执行；事实映射与静态检查证据在主任务 output/apple-release-2026-10-26/legal-site/。
@@ -8,23 +10,23 @@
 
 - 类型：面向 GitHub Pages 的纯静态网站。访客端只有 HTML/CSS/SVG/本地字体和渐进式语言偏好脚本；没有后端、数据库、框架或远程运行依赖。
 - 使用者：查阅 App 政策、条款与支持的公众，以及维护页面的独立开发者。
-- 核心流程：打开首页 → 选择 Light 分类中的 AlignerDiary → 阅读隐私/条款/支持 → 在 AlignerDiary 的 11 语言间切换，或返回已有三语首页（额外语言明确回英语）；其他 App 与模板保持三语。Smart 分类目前没有应用。
-- 本次范围：2026-10-07 参考公开 Figma Community 预览调整视觉设计，采用非对称标题、深绿色手册插画与清晰的文档索引，并为英文、简中、日文配置不同的本地字体。单一邮箱来源、独立开发者身份、三语全文、法律日期及原 URL 保持不变。设计入口为 `DESIGN.md`；本目录为维护源工程，未在本次工作中部署。
+- 核心流程：打开首页 → 从实际应用进入隐私／条款／支持 → 在可用语言中切换或返回同语言首页；在不支持的朝暮有数语言中进入明确标注的英语文档。
+- 本次范围：保留既有配色与各语言字体，把发布首页改为简洁文档目录。页面目的、11 语言菜单、有效商店入口及联系邮箱见 `DESIGN.md`。
 
 ## 权威来源与生成方向
 
-- 英语首页结构和文案基线：`index.html`。AlignerDiary 全部正文（含英语）统一来源为 `assets/locales/alignerdiary.js`，形状为 `{ locale: { privacy, terms, support } }`；其所有 HTML 都是静态输出，不再作为生成输入。其他 App 和模板英语正文仍取各自无语言后缀 HTML。
+- 首页结构：`scripts/build-site.cjs`；专用文案：`assets/home-copy.js`。全部首页 HTML 由生成器写出。AlignerDiary 法律与支持正文仍取 `assets/locales/alignerdiary.js`，其他 App 和模板的英语正文仍取各自无语言后缀 HTML。
 - 联系地址：`assets/site-config.js`，通过 `scripts/build-site.cjs` 同步至正式文档输出。模板保留 `YOUR_EMAIL`。
-- 应用商店身份：`assets/app-catalog.js` 集中维护每个已列应用的三语商品全称、下载 URL、应用 ID、核实日期和来源。AlignerDiary 的商店 ID 为 `6811375012`，2026-10-07 通过 Apple 公开 lookup 接口核实中、美、日店面，Bundle ID 均为 `com.dzy.alignerdiary`。三语首页同时展示全部名称，以当前语言全称作为应用标题；对应文档标题、描述与应用标签复用此数据，法律正文继续使用原有名称与事实。
-- AlignerDiary 11 语言 UI、标题与语言自称：`assets/aligner-languages.js`；其 `supported/labels/messages` 是生成接口，正文另取统一模块。其余三语公共 UI、标题和 meta：`assets/i18n.js`；首页的 `data-i18n` 标记由维护脚本填充，标记节点仅包含文本，浏览器不依赖脚本翻译。其他 App 与模板简中/日文正文：`assets/locales/zh-Hans.js`、`ja.js`；其中旧 AlignerDiary 块不再被生成器消费，由正文负责者处理以免出现竞争维护源。
-- 输出：AlignerDiary 11 语言×3 文档，其他 App／模板各三语×3，首页三语；总 54 页。英语无后缀及既有简中／日文路径保留；新语言同目录使用 `.locale.html`。只有首页和其他 App／模板的英语 HTML 仍是再生成输入。脚本幂等，`--check` 验证输出；缺任一 AlignerDiary 正文先失败再写页，不以英语冒充翻译。相对路径是站内链接的契约。
-- 样式与资源：`assets/style.css`、`assets/favicon.svg`、首页内联笔记本插画。三语主字体分别为 Fraunces、LXGW WenKai、Zen Maru Gothic；英文正文与英文应用名使用已有 Inter，中日文应用全称分别使用其语言字体。字体文件、来源、许可证和子集清单在 `assets/fonts/`，均本地加载。运行时偏好脚本 `assets/site-language.js` 不负责提供正文。
+- 应用商店身份：`assets/app-catalog.js` 集中维护每个已列应用的三语商品全称、下载 URL、应用 ID、核实日期和来源。AlignerDiary 的商店 ID 为 `6811375012`，2026-10-07 通过 Apple 公开 lookup 接口核实中、美、日店面，Bundle ID 均为 `com.dzy.alignerdiary`。对应三语首页各展示当地商品全称，其余语言使用 AlignerDiary 品牌名；对应文档标题、描述与应用标签复用此数据，法律正文继续使用原有名称与事实。
+- 首页与 AlignerDiary 文档的 11 语言 UI、标题与语言自称：`assets/aligner-languages.js`；其余三语公共 UI：`assets/i18n.js`。其他 App 与模板简中、日文正文来自 `assets/locales/zh-Hans.js`、`ja.js`。
+- 输出：AlignerDiary 11 语言×3 文档，朝暮有数与模板各三语×3，首页 11 语，共 62 页。英语无后缀及原有语言路径保留。脚本幂等，`--check` 验证全部输出。
+- 样式与资源：`assets/style.css`、`assets/favicon.svg`。三语主字体分别为 Fraunces、LXGW WenKai、Zen Maru Gothic；英文正文与英文应用名使用已有 Inter，中日文应用全称分别使用其语言字体。字体文件、来源、许可证和子集清单在 `assets/fonts/`，均本地加载。运行时偏好脚本 `assets/site-language.js` 不负责提供正文。
 - 字体维护：`scripts/update-fonts.cjs --check` 离线检查当前页面字符与字体快照；新增字符时，在生成页面后运行 `node scripts/update-fonts.cjs` 联网更新已记录来源的字体子集。常规生成与 CI 不联网下载字体。
 - 正式法律事实、2026-09-20 日期和模板令牌以现有英语正文为基线；不推断新事实。文案、页面输出和检查脚本在本目录统一维护。
 
 ## 本地验证与限制
 
-维护命令为 `node scripts/build-site.cjs`、`node scripts/build-site.cjs --check`、`node scripts/check-site.cjs`。脚本核对当前 54 页生成一致性、内部资源/链接、三语跳转、标题/语言、每页单一 h1、模板令牌与联系地址。浏览器需进一步在 320px、375px 和桌面核对布局、键盘焦点、语言持久化与直接访问行为；只有实际执行后才能标为完成。原 URL 与各语言后缀均须在最终托管路径复验。
+维护命令为 `node scripts/build-site.cjs`、`node scripts/build-site.cjs --check`、`node scripts/check-site.cjs`。脚本核对当前 62 页生成一致性、内链、语言导航、英语回退、资源版本、每页单一 h1、模板令牌与联系地址。浏览器需进一步在 320px、375px 和桌面核对布局、键盘焦点、语言持久化与直接访问行为；只有实际执行后才能标为完成。原 URL 与各语言后缀均须在最终托管路径复验。
 
 2026-10-07 最终本地验证：使用仓库指定的 Node 24.19.0，通过生成一致性、1039 项静态/语言断言以及三语字体覆盖、资源引用、文件校验和与许可证检查。18 份正式及模板文档正文与修改前 Git 版本逐一比对一致。浏览器在 320、375、1280 px 检查三语首页、三语隐私页、日文条款、中文支持及英文隐私模板，共 27 个页面/尺寸组合，均无水平溢出；字体请求完成后三种专属字体均已就绪。另实测跳至正文、键盘焦点、三语切换、同语言返回首页和模拟仓库子路径导航。未发布，线上托管与其他浏览器引擎未验证。
 
