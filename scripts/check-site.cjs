@@ -68,7 +68,7 @@ function checkResource(file, value) {
 assert(JSON.stringify(supported) === JSON.stringify(legacyLanguages), 'shared site locales changed: home/other apps/templates must stay three languages');
 assert(JSON.stringify(aligner.supported) === JSON.stringify(expectedAligner), 'alignerdiary: expected exact approved eleven locales');
 assert(JSON.stringify(Object.keys(alignerBodies).sort()) === JSON.stringify(expectedAligner), 'alignerdiary: body source locale set mismatch');
-assert(apps.alignerdiary.policyUpdated === '2026-11-12', 'alignerdiary: approved policy date must be 2026-11-12');
+assert(apps.alignerdiary.policyUpdated === '2026-11-23', 'alignerdiary: approved policy date must be 2026-11-23');
 for (const lang of expectedAligner) {
   assert(Boolean(aligner.labels[lang]?.trim()), 'alignerdiary: missing autonym ' + lang);
   const copy = aligner.messages[lang];
@@ -197,8 +197,8 @@ for (const base of basePages) {
         const meta = [...html.matchAll(/<div\b([^>]*)>([\s\S]*?)<\/div>/g)].filter(m => (attrs(m[1]).class || '').split(/\s+/).includes('meta'));
         assert(meta.length === 1, relative + ': expected one .meta date');
         const times = [...meta[0][2].matchAll(/<time\b([^>]*)>([\s\S]*?)<\/time>/g)];
-        assert(times.length === 1 && attrs(times[0][1]).datetime === '2026-11-12', relative + ': wrong approved datetime');
-        const date = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : lang, {year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(new Date('2026-11-12T00:00:00Z'));
+        assert(times.length === 1 && attrs(times[0][1]).datetime === '2026-11-23', relative + ': wrong approved datetime');
+        const date = new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : lang, {year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}).format(new Date('2026-11-23T00:00:00Z'));
         assert(visible(times[0][2]) === date, relative + ': visible policy date drift');
         assert(visible(meta[0][2]) === copy.ui.lastUpdated.replace('{date}', date), relative + ': policy date label drift');
         checkContacts(html, relative, lang === 'ar');
