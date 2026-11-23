@@ -7,6 +7,7 @@
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./assets/fonts/typefaces.css?v=d69421ebeb86">
   <link rel="stylesheet" href="./assets/style.css?v=e61fa657d244">
+  <link rel="stylesheet" href="./assets/home.css?v=9eaba01ad313">
 </head>
 <body class="home-page">
 <a class="skip-link" href="#main-content">본문으로 이동</a>
@@ -15,15 +16,27 @@
     <details class="language-menu" data-language-menu><summary data-language-summary><svg class="language-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></svg><span>언어 <bdi lang="en" dir="ltr">/ Language</bdi></span><bdi lang="ko" dir="ltr">한국어</bdi><svg class="language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="m4 6 4 4 4-4"/></svg></summary><nav class="language-menu-panel" aria-label="언어"><a data-language-link data-language="ar" href="./index.ar.html" hreflang="ar" lang="ar" dir="rtl">العربية</a><a data-language-link data-language="de" href="./index.de.html" hreflang="de" lang="de" dir="ltr">Deutsch</a><a data-language-link data-language="en" href="./index.html?lang=en" hreflang="en" lang="en" dir="ltr">English</a><a data-language-link data-language="es" href="./index.es.html" hreflang="es" lang="es" dir="ltr">Español</a><a data-language-link data-language="fr" href="./index.fr.html" hreflang="fr" lang="fr" dir="ltr">Français</a><a data-language-link data-language="it" href="./index.it.html" hreflang="it" lang="it" dir="ltr">Italiano</a><a data-language-link data-language="ja" href="./index.ja.html" hreflang="ja" lang="ja" dir="ltr">日本語</a><a data-language-link data-language="ko" href="./index.ko.html" hreflang="ko" lang="ko" dir="ltr" aria-current="page">한국어</a><a data-language-link data-language="pt" href="./index.pt.html" hreflang="pt" lang="pt" dir="ltr">Português</a><a data-language-link data-language="zh-Hans" href="./index.zh-Hans.html" hreflang="zh-Hans" lang="zh-Hans" dir="ltr">简体中文</a><a data-language-link data-language="zh-Hant" href="./index.zh-Hant.html" hreflang="zh-Hant" lang="zh-Hant" dir="ltr">繁體中文</a></nav></details>
     <h1>앱 법적 정보 및 지원</h1>
   </header>
+  <div class="home-apps">
     <section class="home-app" aria-labelledby="alignerdiary">
-      <h2 id="alignerdiary"><bdi lang="en">AlignerDiary</bdi></h2>
-      <nav class="home-app-links" aria-labelledby="alignerdiary"><ul><li><a href="./apps/alignerdiary/privacy.ko.html" hreflang="ko">개인정보</a></li><li><a href="./apps/alignerdiary/terms.ko.html" hreflang="ko">이용약관</a></li><li><a href="./apps/alignerdiary/support.ko.html" hreflang="ko">지원</a></li><li><a href="https://apps.apple.com/us/app/aligner-tracker-alignerdiary/id6811375012">App Store</a></li></ul></nav>
+      <div class="home-app-heading">
+        <img class="home-app-icon" src="./assets/alignerdiary-icon.webp?v=8d76c9e87eee" width="56" height="56" alt="">
+        <div>
+          <h2 id="alignerdiary"><bdi lang="en">AlignerDiary</bdi></h2>
+        </div>
+      </div>
+      <nav class="home-app-links" aria-labelledby="alignerdiary"><ul><li><a href="./apps/alignerdiary/privacy.ko.html" hreflang="ko">개인정보</a></li><li><a href="./apps/alignerdiary/terms.ko.html" hreflang="ko">이용약관</a></li><li><a href="./apps/alignerdiary/support.ko.html" hreflang="ko">지원</a></li><li><a class="home-store-link" href="https://apps.apple.com/us/app/aligner-tracker-alignerdiary/id6811375012"><bdi lang="en" dir="ltr">App Store</bdi></a></li></ul></nav>
     </section>
     <section class="home-app" aria-labelledby="keepaccounts">
-      <h2 id="keepaccounts"><bdi lang="zh-Hans">朝暮有数</bdi></h2>
-      <p class="home-app-note" id="keepaccounts-note">테스트 중 · 영어 문서 제공</p>
+      <div class="home-app-heading">
+        <img class="home-app-icon" src="./assets/keepaccounts-icon.webp?v=e9de3e58567d" width="56" height="56" alt="">
+        <div>
+          <h2 id="keepaccounts"><bdi lang="zh-Hans">朝暮有数</bdi></h2>
+          <p class="home-app-note" id="keepaccounts-note">테스트 중 · 영어 문서 제공</p>
+        </div>
+      </div>
       <nav class="home-app-links" aria-labelledby="keepaccounts" aria-describedby="keepaccounts-note"><ul><li><a href="./apps/keepaccounts/privacy.html?lang=en" hreflang="en">개인정보</a></li><li><a href="./apps/keepaccounts/terms.html?lang=en" hreflang="en">이용약관</a></li><li><a href="./apps/keepaccounts/support.html?lang=en" hreflang="en">지원</a></li></ul></nav>
     </section>
+  </div>
 </main>
 <footer class="home-shell home-contact">
   <span>문의</span>

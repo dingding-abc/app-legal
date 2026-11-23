@@ -23,7 +23,9 @@ const decode = text => text.replace(/&(?:amp|quot|lt|gt|apos|#39|#x([0-9a-f]+)|#
 const visible = html => decode(html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim();
 function checkVersionedAssets(html, relative) {
   const resources = [...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(m => new URL(m[1], 'https://example.test/' + relative));
-  for (const asset of ['assets/style.css', 'assets/fonts/typefaces.css', 'assets/site-language.js']) {
+  const pairedAssets = ['assets/style.css', 'assets/fonts/typefaces.css', 'assets/site-language.js'];
+  if (relative.startsWith('index')) pairedAssets.push('assets/home.css', 'assets/alignerdiary-icon.webp', 'assets/keepaccounts-icon.webp');
+  for (const asset of pairedAssets) {
     const matches = resources.filter(url => url.pathname === '/' + asset);
     assert(matches.length === 1, relative + ': missing/duplicate paired asset ' + asset);
     const digest = createHash('sha256').update(fs.readFileSync(path.join(root, asset))).digest('hex').slice(0, 12);
@@ -183,6 +185,8 @@ for (const base of basePages) {
         const nameLanguage = isAligner ? (listing ? lang : 'en') : 'zh-Hans';
         const heading = section.match(/<h2 id="([^"]+)"><bdi lang="([^"]+)">([\s\S]*?)<\/bdi><\/h2>/);
         assert(heading?.[1] === id && heading[2] === nameLanguage && visible(heading[3]) === name, relative + ': app identity drift for ' + id);
+        const icon = attrs(section.match(/<img\b[^>]*>/)?.[0] || '');
+        assert(icon.src?.startsWith(`./assets/${id}-icon.webp?v=`) && icon.alt === '' && icon.width === '56' && icon.height === '56', relative + ': missing or incorrect decorative app icon for ' + id);
         const docLanguage = isAligner || legacyLanguages.includes(lang) ? lang : 'en';
         const links = [...section.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
         assert(links.length === (isAligner ? 4 : 3), relative + ': wrong link count for ' + id);

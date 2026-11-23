@@ -85,9 +85,16 @@ function renderHomeApp(id, locale, copy) {
     const href = './apps/' + id + '/' + fileName(page, documentLocale) + (!isAligner && documentLocale === 'en' ? '?lang=en' : '');
     return `<li><a href="${href}" hreflang="${documentLocale}">${esc(label)}</a></li>`;
   }).join('');
+  const icon = versionedAsset(`${id}-icon.webp`, './');
+  const storeLink = storeURL ? `<li><a class="home-store-link" href="${esc(storeURL)}"><bdi lang="en" dir="ltr">App Store</bdi></a></li>` : '';
   return `    <section class="home-app" aria-labelledby="${id}">
-      <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n      <p class="home-app-note" id="keepaccounts-note">' + esc(note) + '</p>' : ''}
-      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="keepaccounts-note"' : ''}><ul>${links}${storeURL ? '<li><a href="' + esc(storeURL) + '">App Store</a></li>' : ''}</ul></nav>
+      <div class="home-app-heading">
+        <img class="home-app-icon" src="${icon}" width="56" height="56" alt="">
+        <div>
+          <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n          <p class="home-app-note" id="keepaccounts-note">' + esc(note) + '</p>' : ''}
+        </div>
+      </div>
+      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="keepaccounts-note"' : ''}><ul>${links}${storeLink}</ul></nav>
     </section>`;
 }
 function renderHome(locale) {
@@ -102,6 +109,7 @@ function renderHome(locale) {
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${versionedAsset('fonts/typefaces.css', './')}">
   <link rel="stylesheet" href="${versionedAsset('style.css', './')}">
+  <link rel="stylesheet" href="${versionedAsset('home.css', './')}">
 </head>
 <body class="home-page">
 <a class="skip-link" href="#main-content">${esc(copy.ui.skip)}</a>
@@ -110,7 +118,9 @@ function renderHome(locale) {
     ${languageMenu('index', locale, copy.ui)}
     <h1>${esc(copy.title)}</h1>
   </header>
+  <div class="home-apps">
 ${Object.keys(apps).sort().map(id => renderHomeApp(id, locale, copy)).join('\n')}
+  </div>
 </main>
 <footer class="home-shell home-contact">
   <span>${esc(contact)}</span>
