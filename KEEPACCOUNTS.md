@@ -10,10 +10,10 @@
 | --- | --- | --- |
 | 账单、备注、分账、往来待办、多图附件 | 本机 SQLite（WAL 分表增量持久化）与应用沙盒压缩多图（单条最多 9 张 JPEG）；「拍照与选图存入应用」开关默认开启，删除记录自动清理孤立副本，完整增删改查 | `src/services/storage/ledgerSqliteStorage.ts`、`src/services/media/photoStorageService.ts`、`src/store/useFlowStore.ts` |
 | 可选 AI 语音（含待办自动映射）与 AI 拍照票据识别 | HTTPS → 双边 Serverless 网关（中国内地阿里云 FC + 百炼/千问/DeepSeek；海外 Google Cloud Run + Gemini/容灾）；客户端零密钥；仅请求内处理，不建账单/录音/图片持久化库 | `src/services/ai/aiRecognitionService.ts`、`serverless/src/prompts.mjs`、`serverless/src/gateway.mjs` |
-| 订阅权益与购买凭证 | Apple StoreKit 月度/年度自动续订；基础手动记账、待办与多图附件免费；不接收银行卡 | `src/components/modals/AiSubscriptionModal.tsx` |
-| 备份快照、CSV 与汇率请求 | 可选 iCloud 私有库快照；CSV 通过系统分享导出；公开汇率接口仅请求币种汇率，不含账单 | `src/services/currency/exchangeRateService.ts`、`src/components/views/DetailsPane.tsx` |
+| 订阅权益与购买凭证 | Apple StoreKit 2 月度（US$5）/ 季度（US$12）/ 年度（US$42）自动续订（符合条件首周免费）；客户端上传签名 JWS，由网关离线比对 Apple Root CA - G3 签发短期 HS256 Entitlement JWT 并按匿名 `originalTransactionId` 做内存级限流；无消耗型打赏、不接收银行卡 | `src/components/modals/AiSubscriptionModal.tsx`、`src/services/iap/subscriptionService.ts`、`modules/keepaccounts-storekit/`、`serverless/src/auth/entitlement.mjs` |
+| 导出、设备备份与汇率请求 | 暂未内置 iCloud / CloudKit 云同步或手动云快照，记录与沙盒照片依赖本机 SQLite 与 iOS 设备备份；CSV 通过系统分享导出（不可用于恢复）；公开汇率接口仅请求币种汇率，不含账单 | `src/services/currency/exchangeRateService.ts`、`src/components/views/DetailsPane.tsx` |
 
-AI 草稿仅用户确认后入账。基础记账和照片附件免费；照片识别尚未提供。月订阅基准 US$3.00，界面与条款采用 Apple 当地实际报价；Apple 一周免费首次优惠由资格决定。TestFlight 沙盒时间可能加速，不代表正式试用时长。
+AI 草稿仅用户确认后入账。基础记账和照片附件永久免费；AI 语音（含待办自动映射）与 AI 拍照票据识别均已接入。订阅定价基准为月度 US$5、季度 US$12、年度 US$42，界面与条款采用 Apple 当地实际报价；Apple 首周免费试用由账号资格决定。TestFlight 沙盒时间可能加速，不代表正式试用时长。当前尚未集成 iCloud/CloudKit 备份，亦无任何内购打赏项目。
 
 本实现不能核实云厂商全部日志和数据保留周期，政策未承诺全链路零保留。没有将无自建数据库等同于 Apple App Privacy “不收集”；App Store 隐私答案及正式审核为独立待办。翻译未经过法律或母语专业审核。
 
