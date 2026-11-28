@@ -1,10 +1,10 @@
-# 朝暮有数政策维护
+# 秒秒记账政策维护
 
-2026-11-28。与 AlignerDiary 共用当前站点、三语生成、页面样式及 `assets/site-config.js` 联系地址。独立公开路径已按用户要求更新为新应用名 `apps/zhaomuyoushu/`（`assets/app-catalog.js` 中的 Apple `bundleId: 'com.dzy.keepaccounts'` 保持不变），中英文及日文逐节对应。本次更新不改变 AlignerDiary 的正文和 `2026-11-23` 日期。
+2026-11-28。与 AlignerDiary 共用当前站点、三语生成、页面样式及 `assets/site-config.js` 联系地址。独立公开路径已按用户要求更新为新应用名 `apps/miaomiaojizhang/`（`assets/app-catalog.js` 中的 Apple `bundleId: 'com.dzy.keepaccounts'` 保持不变），中英文及日文逐节对应。本次更新不改变 AlignerDiary 的正文和 `2026-11-23` 日期。
 
 ## 事实来源
 
-应用当前工作区 `d:/Project/02_jizhang_ios_google`（对外显示名「朝暮有数」，iOS `bundleIdentifier` 未改动）。
+应用当前工作区 `d:/Project/02_jizhang_ios_google`（对外显示名「秒秒记账」，iOS `bundleIdentifier` 未改动）。
 
 | 数据/功能 | 地点、用途与删除 | 代码证据 |
 | --- | --- | --- |

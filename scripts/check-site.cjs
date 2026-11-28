@@ -24,7 +24,7 @@ const visible = html => decode(html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^
 function checkVersionedAssets(html, relative) {
   const resources = [...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(m => new URL(m[1], 'https://example.test/' + relative));
   const pairedAssets = ['assets/style.css', 'assets/fonts/typefaces.css', 'assets/site-language.js'];
-  if (relative.startsWith('index')) pairedAssets.push('assets/home.css', 'assets/alignerdiary-icon.webp', 'assets/zhaomuyoushu-icon.webp');
+  if (relative.startsWith('index')) pairedAssets.push('assets/home.css', 'assets/alignerdiary-icon.webp', 'assets/miaomiaojizhang-icon.webp');
   for (const asset of pairedAssets) {
     const matches = resources.filter(url => url.pathname === '/' + asset);
     assert(matches.length === 1, relative + ': missing/duplicate paired asset ' + asset);
@@ -68,7 +68,7 @@ function checkContacts(html, relative, rtl) {
 
 const basePages = [
   'index',
-  'apps/zhaomuyoushu/privacy', 'apps/zhaomuyoushu/terms', 'apps/zhaomuyoushu/support',
+  'apps/miaomiaojizhang/privacy', 'apps/miaomiaojizhang/terms', 'apps/miaomiaojizhang/support',
   'apps/alignerdiary/privacy', 'apps/alignerdiary/terms', 'apps/alignerdiary/support',
   'apps/_template/privacy', 'apps/_template/terms', 'apps/_template/support',
 ];
@@ -95,7 +95,7 @@ function checkResource(file, value) {
     assert(content.includes(`id="${fragment}"`), `${path.relative(root, file)}: missing anchor ${value}`);
   }
 }
-assert(JSON.stringify(supported) === JSON.stringify(legacyLanguages), 'Zhaomuyoushu and templates must remain three languages');
+assert(JSON.stringify(supported) === JSON.stringify(legacyLanguages), 'Miaomiaojizhang and templates must remain three languages');
 assert(JSON.stringify(aligner.supported) === JSON.stringify(expectedAligner), 'alignerdiary: expected exact approved eleven locales');
 assert(JSON.stringify(Object.keys(alignerBodies).sort()) === JSON.stringify(expectedAligner), 'alignerdiary: body source locale set mismatch');
 assert(apps.alignerdiary.policyUpdated === '2026-11-23', 'alignerdiary: approved policy date must be 2026-11-23');
@@ -123,7 +123,7 @@ for (const lang of ['zh-Hans', 'ja']) {
 }
 const expectedFiles = basePages.flatMap(base => localesFor(base).map(lang => fileFor(base, lang))).sort();
 const actualFiles = fs.readdirSync(root).filter(f => f.endsWith('.html')).concat(fs.readdirSync(path.join(root, 'apps')).flatMap(app => fs.readdirSync(path.join(root, 'apps', app)).filter(f => f.endsWith('.html')).map(f => 'apps/' + app + '/' + f))).sort();
-assert(expectedFiles.length === 62 && JSON.stringify(actualFiles) === JSON.stringify(expectedFiles), 'static output: expected exact 62 pages (33 AlignerDiary + 9 Zhaomuyoushu + 9 template + 11 home)');
+assert(expectedFiles.length === 62 && JSON.stringify(actualFiles) === JSON.stringify(expectedFiles), 'static output: expected exact 62 pages (33 AlignerDiary + 9 Miaomiaojizhang + 9 template + 11 home)');
 for (const [id, app] of Object.entries(apps)) {
   for (const language of supported) {
     const listing = app.locales[language];
@@ -161,7 +161,7 @@ for (const base of basePages) {
     for (const targetLang of localesFor(base)) {
       const link = languageLinks.find((item) => item['data-language'] === targetLang);
       assert(Boolean(link), `${relative}: missing ${targetLang} language link`);
-      const explicitEnglish = targetLang === 'en' && (home || base.startsWith('apps/zhaomuyoushu/'));
+      const explicitEnglish = targetLang === 'en' && (home || base.startsWith('apps/miaomiaojizhang/'));
       const expected = `./${fileFor(path.basename(base), targetLang)}${explicitEnglish ? '?lang=en' : ''}`;
       assert(link.href === expected, `${relative}: ${targetLang} points to ${link.href}, expected ${expected}`);
       assert(link.hreflang === targetLang && link.lang === targetLang, `${relative}: language link labels mismatch`);
@@ -177,7 +177,7 @@ for (const base of basePages) {
       assert(count(html, /href="mailto:/g) === 1, relative + ': expected one homepage contact');
       assert(visible(html).includes(homeCopy[lang]?.contact), relative + ': contact label missing');
       const sections = [...html.matchAll(/<section class="home-app" aria-labelledby="([^"]+)">([\s\S]*?)<\/section>/g)];
-      assert(sections.length === 2 && sections[0][1] === 'alignerdiary' && sections[1][1] === 'zhaomuyoushu', relative + ': wrong app order or list size');
+      assert(sections.length === 2 && sections[0][1] === 'alignerdiary' && sections[1][1] === 'miaomiaojizhang', relative + ': wrong app order or list size');
       for (const [, id, section] of sections) {
         const isAligner = id === 'alignerdiary';
         const listing = apps[id].locales[lang];
@@ -192,16 +192,16 @@ for (const base of basePages) {
         assert(links.length === (isAligner ? 4 : 3), relative + ': wrong link count for ' + id);
         for (const [index, page] of kinds.entries()) {
           const a = attrs(links[index][1]);
-          const englishQuery = id === 'zhaomuyoushu' && docLanguage === 'en' ? '?lang=en' : '';
+          const englishQuery = id === 'miaomiaojizhang' && docLanguage === 'en' ? '?lang=en' : '';
           assert(a.href === './apps/' + id + '/' + fileFor(page, docLanguage) + englishQuery, relative + ': wrong ' + id + ' ' + page + ' destination');
           assert(a.hreflang === docLanguage && visible(links[index][2]) === copy.ui[page + 'Short'], relative + ': wrong ' + id + ' ' + page + ' label or language');
         }
         if (isAligner) {
           assert(attrs(links[3][1]).href === (listing?.storeURL || apps.alignerdiary.locales.en.storeURL), relative + ': store URL mismatch');
         } else {
-          const note = section.match(/<p class="home-app-note" id="zhaomuyoushu-note">([\s\S]*?)<\/p>/);
+          const note = section.match(/<p class="home-app-note" id="miaomiaojizhang-note">([\s\S]*?)<\/p>/);
           const expected = homeCopy[lang].testing + (docLanguage === lang ? '' : ' · ' + homeCopy[lang].fallback);
-          assert(note && visible(note[1]) === expected && section.includes('aria-describedby="zhaomuyoushu-note"'), relative + ': testing/fallback status is missing or unassociated');
+          assert(note && visible(note[1]) === expected && section.includes('aria-describedby="miaomiaojizhang-note"'), relative + ': testing/fallback status is missing or unassociated');
         }
       }
     } else {
@@ -210,7 +210,7 @@ for (const base of basePages) {
       if (!app) assert(count(body, /<p\b/g) === expectedParagraphs, `${relative}: paragraph count drift`);
       const homeHref = '../../' + fileFor('index', lang) + (!template && lang === 'en' ? '?lang=en' : '');
       assert(count(html, /<a\b[^>]*href="\.\.\/\.\.\/index[^\"]*"/g) === 2 && html.split('href="' + homeHref + '"').length === 3, relative + ': home or breadcrumb link loses language');
-      const docHref = page => './' + fileFor(page, lang) + (base.startsWith('apps/zhaomuyoushu/') && lang === 'en' ? '?lang=en' : '');
+      const docHref = page => './' + fileFor(page, lang) + (base.startsWith('apps/miaomiaojizhang/') && lang === 'en' ? '?lang=en' : '');
       const navs = [...html.matchAll(/<nav\b[^>]*>([\s\S]*?)<\/nav>/g)].filter(m => kinds.every(page => m[1].includes('href="' + docHref(page) + '"')));
       assert(navs.length === 1, relative + ': document navigation missing or duplicated');
       const nav = navs[0][1];
@@ -226,11 +226,11 @@ for (const base of basePages) {
         for (const token of tokens) assert(html.includes(token), `${relative}: lost ${token}`);
         assert(!html.includes('AlignerDiary'), `${relative}: concrete app leaked into template`);
       }
-      if(base.startsWith('apps/zhaomuyoushu/')){
+      if(base.startsWith('apps/miaomiaojizhang/')){
         checkContacts(html, relative, false);
         assert(!/YOUR_EMAIL|LAST_UPDATED|APP_NAME|{{EMAIL}}/.test(html),relative+': placeholder leaked');
         assert(html.includes(lang==='en'?'November 28, 2026':'2026年11月28日'),relative+': wrong date');
-        assert(html.includes('朝暮有数'),relative+': wrong app');
+        assert(html.includes('秒秒记账'),relative+': wrong app');
         if (lang === 'en') assert(!/href="\.\/(?:privacy|terms|support)\.html"/.test(body), relative + ': English body link could switch to a saved language');
       }
       if (app) {
@@ -366,7 +366,7 @@ for (const base of basePages) {
 for (const saved of ['ja', 'zh-Hans', 'ar', 'it']) assert(runLanguage('index.html', saved, false, '/repository-prefix/', '?lang=en').redirected === null, 'explicit English home query redirected');
 for (const prefix of ['/', '/repository-prefix/']) {
   assert(runLanguage('index.html', 'ar', false, prefix).redirected === 'https://example.test' + prefix + 'index.ar.html', 'default home lost saved Arabic at ' + prefix);
-  for (const page of ['index.html', 'apps/zhaomuyoushu/privacy.html', 'apps/zhaomuyoushu/terms.html', 'apps/zhaomuyoushu/support.html']) {
+  for (const page of ['index.html', 'apps/miaomiaojizhang/privacy.html', 'apps/miaomiaojizhang/terms.html', 'apps/miaomiaojizhang/support.html']) {
     const explicit = runLanguage(page, 'ja', 'write', prefix, '?lang=en');
     assert(explicit.redirected === null, page + ': English locale should beat readable saved Japanese after failed write');
     explicit.handlers.en({});

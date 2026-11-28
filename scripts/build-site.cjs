@@ -91,10 +91,10 @@ function renderHomeApp(id, locale, copy) {
       <div class="home-app-heading">
         <img class="home-app-icon" src="${icon}" width="56" height="56" alt="">
         <div>
-          <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n          <p class="home-app-note" id="zhaomuyoushu-note">' + esc(note) + '</p>' : ''}
+          <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n          <p class="home-app-note" id="miaomiaojizhang-note">' + esc(note) + '</p>' : ''}
         </div>
       </div>
-      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="zhaomuyoushu-note"' : ''}><ul>${links}${storeLink}</ul></nav>
+      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="miaomiaojizhang-note"' : ''}><ul>${links}${storeLink}</ul></nav>
     </section>`;
 }
 function renderHome(locale) {
@@ -149,8 +149,8 @@ function documentBody(source, app, page, locale) {
   let body = app === 'alignerdiary' ? alignerContent()[locale]?.[page] : locale === 'en' ? extractEnglishBody(source) : bodies[locale]?.[app]?.[page];
   if (!body) throw Error(`Missing ${locale}/${app}/${page} body`);
   if (app !== 'template') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)), app === 'alignerdiary');
-  if (locale !== 'en' || app === 'zhaomuyoushu') {
-    const explicitEnglish = app === 'zhaomuyoushu' && locale === 'en' ? '?lang=en' : '';
+  if (locale !== 'en' || app === 'miaomiaojizhang') {
+    const explicitEnglish = app === 'miaomiaojizhang' && locale === 'en' ? '?lang=en' : '';
     body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}${explicitEnglish}"`);
   }
   return body.replace(/\r\n/g, '\n').trim();
@@ -181,7 +181,7 @@ function renderDoc(app, page, locale, body) {
     const formatted = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(date + 'T00:00:00Z'));
     labelMarkup = esc(ui.lastUpdated).replace('{date}', `<time datetime="${date}">${esc(formatted)}</time>`);
   }
-  const docLink = (name, text) => `<a href="./${fileName(name, locale)}${app === 'zhaomuyoushu' && locale === 'en' ? '?lang=en' : ''}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
+  const docLink = (name, text) => `<a href="./${fileName(name, locale)}${app === 'miaomiaojizhang' && locale === 'en' ? '?lang=en' : ''}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
   return `<!doctype html>
 <html lang="${locale}"${isAligner ? ` dir="${locale === 'ar' ? 'rtl' : 'ltr'}"` : ''}>
 <head>
@@ -198,7 +198,7 @@ function renderDoc(app, page, locale, body) {
   <a class="brand" href="${homeFile}" aria-label="${esc(homeAria)}">${brandMark}<span>${esc(copy.title)}</span></a>
   <div class="header-tools">${isAligner ? `\n    ${languageMenu(page, locale, ui)}` : ''}
     <nav aria-label="${esc(app === 'template' ? ui.templateNavDocs : app === 'alignerdiary' ? ui.navDocs : appName)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
-    ${isAligner ? '' : switcher(page, locale, ui, app === 'zhaomuyoushu')}
+    ${isAligner ? '' : switcher(page, locale, ui, app === 'miaomiaojizhang')}
   </div>
 </div></header>
 <div class="article-shell"><div class="breadcrumb"><a href="${homeFile}"><span${isAligner ? ' class="back-arrow"' : ''} aria-hidden="true">←</span> ${esc(homeLabel)}</a></div>

@@ -1,12 +1,12 @@
 // Public App Store names, verified with Apple's lookup API on 2026-10-07.
 // Keep the store title verbatim so visitors can search for the same app.
 module.exports = Object.freeze({
-  zhaomuyoushu: {
+  miaomiaojizhang: {
     storeId: '6820356123', bundleId: 'com.dzy.keepaccounts', status: 'testing', policyUpdated: '2026-11-28',
     locales: {
-      en: { name: '朝暮有数', description: 'Personal & multi-ledger bookkeeping with todos, compressed photo attachments, and optional AI voice & photo recognition. In testing.' },
-      'zh-Hans': { name: '朝暮有数', description: '日常与多账本记账、往来待办及压缩多图附件，可选 AI 语音与拍照识别。测试中。' },
-      ja: { name: '朝暮有数', description: '個人・複数帳簿の記帳、立替・貸借管理、圧縮写真添付、任意の AI 音声・写真認識。テスト中。' },
+      en: { name: '秒秒记账', description: 'Personal & multi-ledger bookkeeping with todos, compressed photo attachments, and optional AI voice & photo recognition. In testing.' },
+      'zh-Hans': { name: '秒秒记账', description: '日常与多账本记账、往来待办及压缩多图附件，可选 AI 语音与拍照识别。测试中。' },
+      ja: { name: '秒秒记账', description: '個人・複数帳簿の記帳、立替・貸借管理、圧縮写真添付、任意の AI 音声・写真認識。テスト中。' },
     },
   },
   alignerdiary: {

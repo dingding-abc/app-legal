@@ -17,7 +17,7 @@ const specs = [
   { locale: 'ja', family: 'Zen Maru Gothic', query: 'Zen Maru Gothic:wght@400;500;700', slug: 'zenmarugothic' },
 ];
 function corpus(locale) {
-  const pages = ['index', ...['alignerdiary', 'zhaomuyoushu', '_template'].flatMap(app => ['privacy', 'terms', 'support'].map(page => `apps/${app}/${page}`))];
+  const pages = ['index', ...['alignerdiary', 'miaomiaojizhang', '_template'].flatMap(app => ['privacy', 'terms', 'support'].map(page => `apps/${app}/${page}`))];
   const text = pages.map(page => fs.readFileSync(path.join(root, `${page}${locale === 'en' ? '' : `.${locale}`}.html`), 'utf8')
     .replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')).join('');
   const ascii = Array.from({ length: 95 }, (_, i) => String.fromCharCode(i + 32)).join('');

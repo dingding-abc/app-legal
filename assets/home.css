@@ -39,7 +39,7 @@
   border-radius: 17px 17px 0 0;
   background: linear-gradient(var(--home-wash-angle), var(--home-card-wash), transparent 53%);
 }
-.home-app[aria-labelledby="zhaomuyoushu"] .home-app-heading {
+.home-app[aria-labelledby="miaomiaojizhang"] .home-app-heading {
   --home-card-wash: color-mix(in srgb, var(--lime) 24%, var(--surface));
 }
 .home-app-icon {

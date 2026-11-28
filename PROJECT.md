@@ -1,18 +1,18 @@
-> 2026-11-28 朝暮有数公开文档目录由 `apps/keepaccounts/` 迁移至 `apps/zhaomuyoushu/`（保留 `bundleId: 'com.dzy.keepaccounts'` 不变），并按最新应用实现更新中英日隐私、条款与支持内容（日期 `2026-11-28`）；AlignerDiary 33 页及模板保持不变，站点总计仍为 62 页。
+> 2026-11-28 秒秒记账公开文档目录由 `apps/keepaccounts/` 迁移至 `apps/miaomiaojizhang/`（保留 `bundleId: 'com.dzy.keepaccounts'` 不变），并按最新应用实现更新中英日隐私、条款与支持内容（日期 `2026-11-28`）；AlignerDiary 33 页及模板保持不变，站点总计仍为 62 页。
 
-> 2026-11-23 首页现为双应用文档目录。首页对应 AlignerDiary 的 11 种语言；朝暮有数在其余八种首页语言提示使用英语文档。当前生成总数 62。下方带日期的记录描述当时范围。
+> 2026-11-23 首页现为双应用文档目录。首页对应 AlignerDiary 的 11 种语言；秒秒记账在其余八种首页语言提示使用英语文档。当前生成总数 62。下方带日期的记录描述当时范围。
 
 > 2026-11-12 本地准备：AlignerDiary 简明政策与支持扩为 11 语言（33 页），当前全部输出共 54 页；用户提供 1.2.0 已审核通过事实。共通 1.9.31 核心、UI 与现有语言偏好涉及的 DATA 已由本技术会话实际读取并显式 ack，严格门禁通过；该状态不代表产品验收。未提交／推送／部署；最终测试和浏览器独立验收另行记录。
 
 > 2026-10-26：AlignerDiary 中英日隐私／条款／支持已按当前 SDK58 真实实现准备本地同步，日期仅九份受影响文档更新为2026-10-26。补充主动30天免费试用、一次终身购买、旧生产原始build≤85.2资格、到期保留与限制、Keychain及Widget最小访问状态、相册另存和计划／全部数据清除边界。日期由 assets/app-catalog.js 的每App policyUpdated 生成；keepaccounts 与模板正文／日期保持原样。下文9月20日保护描述为此前内容基线，本次变更由当前发布准备范围明确授权。尚未部署、未经法律或母语审校，浏览器本轮未执行；事实映射与静态检查证据在主任务 output/apple-release-2026-10-26/legal-site/。
 
-> 2026-10-12：朝暮有数新增中英日隐私／条款／支持共九页，与 AlignerDiary 在同站统一维护，目录 apps/keepaccounts。联系方式仍只来自 assets/site-config.js；三语内容与页面生成沿用现有流程。下方“只有 AlignerDiary／21页”为此前阶段；当前30页。新应用处于测试阶段，不提供虚构的商店下载链接。事实与验收见 KEEPACCOUNTS.md。
+> 2026-10-12：秒秒记账新增中英日隐私／条款／支持共九页，与 AlignerDiary 在同站统一维护，目录 apps/keepaccounts。联系方式仍只来自 assets/site-config.js；三语内容与页面生成沿用现有流程。下方“只有 AlignerDiary／21页”为此前阶段；当前30页。新应用处于测试阶段，不提供虚构的商店下载链接。事实与验收见 KEEPACCOUNTS.md。
 
 # App Legal & Support · 项目档案
 
 - 类型：面向 GitHub Pages 的纯静态网站。访客端只有静态 HTML/CSS、本地图标与字体，以及渐进式语言偏好脚本；没有后端、数据库、框架或远程运行依赖。
 - 使用者：查阅 App 政策、条款与支持的公众，以及维护页面的独立开发者。
-- 核心流程：打开首页 → 从实际应用进入隐私／条款／支持 → 在可用语言中切换或返回同语言首页；在不支持的朝暮有数语言中进入明确标注的英语文档。
+- 核心流程：打开首页 → 从实际应用进入隐私／条款／支持 → 在可用语言中切换或返回同语言首页；在不支持的秒秒记账语言中进入明确标注的英语文档。
 - 本次范围：保留既有配色与各语言字体，把发布首页改为简洁文档目录。页面目的、11 语言菜单、有效商店入口及联系邮箱见 `DESIGN.md`。
 
 ## 权威来源与生成方向
@@ -21,7 +21,7 @@
 - 联系地址：`assets/site-config.js`，通过 `scripts/build-site.cjs` 同步至正式文档输出。模板保留 `YOUR_EMAIL`。
 - 应用商店身份：`assets/app-catalog.js` 集中维护每个已列应用的三语商品全称、下载 URL、应用 ID、核实日期和来源。AlignerDiary 的商店 ID 为 `6811375012`，2026-10-07 通过 Apple 公开 lookup 接口核实中、美、日店面，Bundle ID 均为 `com.dzy.alignerdiary`。对应三语首页各展示当地商品全称，其余语言使用 AlignerDiary 品牌名；对应文档标题、描述与应用标签复用此数据，法律正文继续使用原有名称与事实。
 - 首页与 AlignerDiary 文档的 11 语言 UI、标题与语言自称：`assets/aligner-languages.js`；其余三语公共 UI：`assets/i18n.js`。其他 App 与模板简中、日文正文来自 `assets/locales/zh-Hans.js`、`ja.js`。
-- 输出：AlignerDiary 11 语言×3 文档，朝暮有数与模板各三语×3，首页 11 语，共 62 页。英语无后缀及原有语言路径保留。脚本幂等，`--check` 验证全部输出。
+- 输出：AlignerDiary 11 语言×3 文档，秒秒记账与模板各三语×3，首页 11 语，共 62 页。英语无后缀及原有语言路径保留。脚本幂等，`--check` 验证全部输出。
 - 样式与资源：`assets/style.css`、`assets/favicon.svg`。三语主字体分别为 Fraunces、LXGW WenKai、Zen Maru Gothic；英文正文与英文应用名使用已有 Inter，中日文应用全称分别使用其语言字体。字体文件、来源、许可证和子集清单在 `assets/fonts/`，均本地加载。运行时偏好脚本 `assets/site-language.js` 不负责提供正文。
 - 字体维护：`scripts/update-fonts.cjs --check` 离线检查当前页面字符与字体快照；新增字符时，在生成页面后运行 `node scripts/update-fonts.cjs` 联网更新已记录来源的字体子集。常规生成与 CI 不联网下载字体。
 - 正式法律事实、2026-09-20 日期和模板令牌以现有英语正文为基线；不推断新事实。文案、页面输出和检查脚本在本目录统一维护。
