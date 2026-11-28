@@ -1,6 +1,6 @@
 # 秒秒记账政策维护
 
-2026-11-28。与 AlignerDiary 共用当前站点、三语生成、页面样式及 `assets/site-config.js` 联系地址。独立公开路径已按用户要求更新为新应用名 `apps/miaomiaojizhang/`（`assets/app-catalog.js` 中的 Apple `bundleId: 'com.dzy.keepaccounts'` 保持不变），中英文及日文逐节对应。本次更新不改变 AlignerDiary 的正文和 `2026-11-23` 日期。
+2026-11-28。与 AlignerDiary 共用当前站点、统一 11 语言 `.aligner-doc` 页面框架（含右上角 11 语言地球下拉菜单、版本化静态资源与统一正文排版）及 `assets/site-config.js` 联系地址。独立公开路径已按用户要求更新为新应用名 `apps/miaomiaojizhang/`（中文名「秒秒记账」，英文/国际品牌名「Swiftally」，`assets/app-catalog.js` 中的 Apple `bundleId: 'com.dzy.keepaccounts'` 保持不变），11 种语言全部由 `assets/locales/miaomiaojizhang.js` 统一维护并与 `zh-Hans.js`/`ja.js` 同步。本次更新不改变 AlignerDiary 的正文和 `2026-11-23` 日期。
 
 ## 事实来源
 

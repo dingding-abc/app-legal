@@ -9,7 +9,8 @@ const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const alignerLanguages = require('../assets/aligner-languages.js');
 const homeCopy = require('../assets/home-copy.js');
-let alignerBodies; // Loaded only when AlignerDiary generation begins.
+const modernApps = new Set(['alignerdiary', 'miaomiaojizhang']);
+const modernBodiesCache = new Map();
 const bodies = {
   'zh-Hans': require('../assets/locales/zh-Hans.js'),
   ja: require('../assets/locales/ja.js'),
@@ -52,37 +53,38 @@ function languageMenu(name, locale, ui) {
   }).join('');
   return `<details class="language-menu" data-language-menu><summary data-language-summary>${globe}<span>${esc(ui.languageLabel)}${locale === 'en' ? '' : ' <bdi lang="en" dir="ltr">/ Language</bdi>'}</span><bdi lang="${locale}" dir="${locale === 'ar' ? 'rtl' : 'ltr'}">${esc(alignerLanguages.labels[locale])}</bdi><svg class="language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="m4 6 4 4 4-4"/></svg></summary><nav class="language-menu-panel" aria-label="${esc(ui.languageLabel)}">${links}</nav></details>`;
 }
-function alignerContent() {
-  if (!alignerBodies) {
-    const content = require('../assets/locales/alignerdiary.js');
+function modernContent(app) {
+  if (!modernBodiesCache.has(app)) {
+    const content = require(`../assets/locales/${app}.js`);
     for (const locale of alignerLanguages.supported) {
       const copy = alignerLanguages.messages[locale];
-      if (!copy || !alignerLanguages.labels[locale] || !copy.ui.lastUpdated.includes('{date}')) throw Error(`Missing AlignerDiary UI: ${locale}`);
+      if (!copy || !alignerLanguages.labels[locale] || !copy.ui.lastUpdated.includes('{date}')) throw Error(`Missing ${app} UI: ${locale}`);
       for (const page of ['privacy', 'terms', 'support']) {
-        if (typeof content[locale]?.[page] !== 'string' || !content[locale][page].trim()) throw Error(`Missing AlignerDiary body: ${locale}/${page}`);
-        if (!copy.page[page]?.[0]) throw Error(`Missing AlignerDiary title: ${locale}/${page}`);
+        if (typeof content[locale]?.[page] !== 'string' || !content[locale][page].trim()) throw Error(`Missing ${app} body: ${locale}/${page}`);
+        if (!copy.page[page]?.[0]) throw Error(`Missing ${app} title: ${locale}/${page}`);
       }
     }
-    alignerBodies = content;
+    modernBodiesCache.set(app, content);
   }
-  return alignerBodies;
+  return modernBodiesCache.get(app);
 }
 function homeHref(locale, prefix = './') {
   return prefix + fileName('index', locale) + (locale === 'en' ? '?lang=en' : '');
 }
 function renderHomeApp(id, locale, copy) {
   const isAligner = id === 'alignerdiary';
+  const isModern = modernApps.has(id);
   const listing = apps[id].locales[locale];
-  const documentLocale = isAligner || listing ? locale : 'en';
+  const documentLocale = isModern || listing ? locale : 'en';
   const englishFallback = documentLocale !== locale;
   const { testing, fallback } = homeCopy[locale];
   const note = [apps[id].status === 'testing' ? testing : '', englishFallback ? fallback : ''].filter(Boolean).join(' · ');
   const name = listing?.name || (isAligner ? 'AlignerDiary' : apps[id].locales.en.name);
-  const nameLanguage = isAligner ? (listing ? locale : 'en') : 'zh-Hans';
+  const nameLanguage = isAligner ? (listing ? locale : 'en') : (locale === 'zh-Hans' ? 'zh-Hans' : 'en');
   const storeURL = isAligner ? (listing?.storeURL || apps[id].locales.en.storeURL) : null;
   const labels = { privacy: copy.ui.privacyShort, terms: copy.ui.termsShort, support: copy.ui.supportShort };
   const links = Object.entries(labels).map(([page, label]) => {
-    const href = './apps/' + id + '/' + fileName(page, documentLocale) + (!isAligner && documentLocale === 'en' ? '?lang=en' : '');
+    const href = './apps/' + id + '/' + fileName(page, documentLocale) + (!isModern && documentLocale === 'en' ? '?lang=en' : '');
     return `<li><a href="${href}" hreflang="${documentLocale}">${esc(label)}</a></li>`;
   }).join('');
   const icon = versionedAsset(`${id}-icon.webp`, './');
@@ -145,24 +147,23 @@ function contactLinks(html, isolate = false) {
     `<a data-contact-email${isolate ? ' dir="ltr"' : ''} href="mailto:${esc(config.contactEmail)}">${esc(config.contactEmail)}</a>`);
 }
 function documentBody(source, app, page, locale) {
-  // All 33 AlignerDiary bodies have one authority, including English.
-  let body = app === 'alignerdiary' ? alignerContent()[locale]?.[page] : locale === 'en' ? extractEnglishBody(source) : bodies[locale]?.[app]?.[page];
+  const isModern = modernApps.has(app);
+  let body = isModern ? modernContent(app)[locale]?.[page] : locale === 'en' ? extractEnglishBody(source) : bodies[locale]?.[app]?.[page];
   if (!body) throw Error(`Missing ${locale}/${app}/${page} body`);
-  if (app !== 'template') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)), app === 'alignerdiary');
-  if (locale !== 'en' || app === 'miaomiaojizhang') {
-    const explicitEnglish = app === 'miaomiaojizhang' && locale === 'en' ? '?lang=en' : '';
-    body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}${explicitEnglish}"`);
+  if (app !== 'template') body = contactLinks(body.replaceAll('{{EMAIL}}', esc(config.contactEmail)), isModern);
+  if (locale !== 'en') {
+    body = body.replace(/href="\.\/(privacy|terms|support)\.html"/g, (_, name) => `href="./${fileName(name, locale)}"`);
   }
   return body.replace(/\r\n/g, '\n').trim();
 }
 function renderDoc(app, page, locale, body) {
-  const isAligner = app === 'alignerdiary';
-  const copy = isAligner ? alignerLanguages.messages[locale] : messages[locale];
+  const isModern = modernApps.has(app);
+  const copy = isModern ? alignerLanguages.messages[locale] : messages[locale];
   const ui = copy.ui;
   const homeFile = app === 'template' ? '../../' + fileName('index', locale) : homeHref(locale, '../../');
   const homeLabel = ui.allApps;
   const homeAria = ui.brandHome;
-  const appName = app === 'template' ? 'APP_NAME' : isAligner ? (apps[app].locales[locale]?.name || 'AlignerDiary') : apps[app].locales[locale].name;
+  const appName = app === 'template' ? 'APP_NAME' : isModern ? (apps[app].locales[locale]?.name || (app === 'alignerdiary' ? 'AlignerDiary' : apps[app].locales.en.name)) : apps[app].locales[locale].name;
   const pageTitle = copy.page[page][0];
   const description = `${pageTitle} · ${appName}`;
   let label = page === 'privacy' || page === 'terms'
@@ -176,56 +177,58 @@ function renderDoc(app, page, locale, body) {
     label = ({ en: 'Last updated: ' + englishDate, 'zh-Hans': '最后更新：' + year + '年' + month + '月' + day + '日', ja: '最終更新日：' + year + '年' + month + '月' + day + '日' })[locale];
   }
   let labelMarkup = esc(label);
-  if (isAligner) {
+  if (isModern) {
     const date = apps[app].policyUpdated;
-    const formatted = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(date + 'T00:00:00Z'));
+    const formatted = new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(date + 'T00:00:00Z'));
     labelMarkup = esc(ui.lastUpdated).replace('{date}', `<time datetime="${date}">${esc(formatted)}</time>`);
   }
-  const docLink = (name, text) => `<a href="./${fileName(name, locale)}${app === 'miaomiaojizhang' && locale === 'en' ? '?lang=en' : ''}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
+  const docLink = (name, text) => `<a href="./${fileName(name, locale)}"${name === page ? ' aria-current="page"' : ''}>${esc(text)}</a>`;
+  const navLabel = app === 'template' ? ui.templateNavDocs : app === 'alignerdiary' ? ui.navDocs : ui.navDocs.replace(/AlignerDiary|齿间时光/g, appName);
   return `<!doctype html>
-<html lang="${locale}"${isAligner ? ` dir="${locale === 'ar' ? 'rtl' : 'ltr'}"` : ''}>
+<html lang="${locale}"${isModern ? ` dir="${locale === 'ar' ? 'rtl' : 'ltr'}"` : ''}>
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="${esc(description)}">
   <title>${esc(pageTitle)} · ${esc(appName)}</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="${isAligner ? versionedAsset('fonts/typefaces.css') : '../../assets/fonts/typefaces.css'}">
-  <link rel="stylesheet" href="${isAligner ? versionedAsset('style.css') : '../../assets/style.css'}">
+  <link rel="stylesheet" href="${isModern ? versionedAsset('fonts/typefaces.css') : '../../assets/fonts/typefaces.css'}">
+  <link rel="stylesheet" href="${isModern ? versionedAsset('style.css') : '../../assets/style.css'}">
 </head>
-<body${isAligner ? ' class="aligner-doc"' : ''}>
+<body${isModern ? ' class="aligner-doc"' : ''}>
 <a class="skip-link" href="#main-content">${esc(ui.skip)}</a>
 <header class="site-header"><div class="container inner">
   <a class="brand" href="${homeFile}" aria-label="${esc(homeAria)}">${brandMark}<span>${esc(copy.title)}</span></a>
-  <div class="header-tools">${isAligner ? `\n    ${languageMenu(page, locale, ui)}` : ''}
-    <nav aria-label="${esc(app === 'template' ? ui.templateNavDocs : app === 'alignerdiary' ? ui.navDocs : appName)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
-    ${isAligner ? '' : switcher(page, locale, ui, app === 'miaomiaojizhang')}
+  <div class="header-tools">${isModern ? `\n    ${languageMenu(page, locale, ui)}` : ''}
+    <nav aria-label="${esc(navLabel)}">${docLink('privacy', ui.privacyShort)}${docLink('terms', ui.termsShort)}${docLink('support', ui.supportShort)}</nav>
+    ${isModern ? '' : switcher(page, locale, ui, false)}
   </div>
 </div></header>
-<div class="article-shell"><div class="breadcrumb"><a href="${homeFile}"><span${isAligner ? ' class="back-arrow"' : ''} aria-hidden="true">←</span> ${esc(homeLabel)}</a></div>
+<div class="article-shell"><div class="breadcrumb"><a href="${homeFile}"><span${isModern ? ' class="back-arrow"' : ''} aria-hidden="true">←</span> ${esc(homeLabel)}</a></div>
 <main id="main-content" class="article">
-  <span class="badge">${isAligner ? `<bdi dir="auto">${esc(appName)}</bdi>` : esc(appName)}</span><h1>${esc(pageTitle)}</h1><div class="meta">${labelMarkup}</div>
+  <span class="badge">${isModern ? `<bdi dir="auto">${esc(appName)}</bdi>` : esc(appName)}</span><h1>${esc(pageTitle)}</h1><div class="meta">${labelMarkup}</div>
   <!-- article-body:start -->
   ${body}
   <!-- article-body:end -->
 </main></div>
 <footer class="site-footer"><div class="container"><strong>${esc(copy.title)}</strong><span>${esc(ui.footer)}</span></div></footer>
-<script src="${isAligner ? versionedAsset('site-language.js') : '../../assets/site-language.js'}" defer></script>
+<script src="${isModern ? versionedAsset('site-language.js') : '../../assets/site-language.js'}" defer></script>
 </body></html>
 `;
 }
 
-// Validate the new authority before writing outputs; incomplete translations fail closed.
-alignerContent();
+// Validate the modern app authorities before writing outputs; incomplete translations fail closed.
+for (const app of modernApps) modernContent(app);
 for (const locale of alignerLanguages.supported) {
   if (!homeCopy[locale]?.contact || !homeCopy[locale]?.testing || (!supported.includes(locale) && !homeCopy[locale]?.fallback)) throw Error('Missing homepage copy: ' + locale);
   write(fileName('index', locale), renderHome(locale));
 }
 for (const app of [...Object.keys(apps), '_template']) {
   const key = app === '_template' ? 'template' : app;
+  const isModern = modernApps.has(key);
   for (const page of ['privacy', 'terms', 'support']) {
-    const source = key === 'alignerdiary' ? '' : fs.readFileSync(path.join(root, 'apps', app, `${page}.html`), 'utf8');
+    const source = isModern ? '' : fs.readFileSync(path.join(root, 'apps', app, `${page}.html`), 'utf8');
     const englishBody = documentBody(source, key, page, 'en');
-    for (const locale of key === 'alignerdiary' ? alignerLanguages.supported : supported) {
+    for (const locale of isModern ? alignerLanguages.supported : supported) {
       const body = locale === 'en' ? englishBody : documentBody(source, key, page, locale);
       const out = renderDoc(key, page, locale, body);
       write(path.join('apps', app, fileName(page, locale)), out);

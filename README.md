@@ -1,4 +1,4 @@
-> 2026-11-28 秒秒记账公开文档路径更新为 `apps/miaomiaojizhang/`（保留 `bundleId: 'com.dzy.keepaccounts'` 不变），并同步更新中英日隐私、条款与支持正文（日期 `2026-11-28`）。AlignerDiary 与模板保持不变，共 62 页。
+> 2026-11-28 秒秒记账（英文名 `Swiftally`）公开文档路径更新为 `apps/miaomiaojizhang/`（保留 `bundleId: 'com.dzy.keepaccounts'` 不变），并统一为与 AlignerDiary 一致的 11 语言 `.aligner-doc` 页面框架（简体中文展示「秒秒记账」，英文及其他国际语种展示「Swiftally」，统一源 `assets/locales/miaomiaojizhang.js`，日期 `2026-11-28`，33 页）。AlignerDiary（33 页）与模板（9 页）保持不变，站点共 86 页（含 11 语首页）。
 
 > 2026-11-23 首页改用简洁应用目录，并生成与 AlignerDiary 文档同范围的 11 语言版本。以下带日期的记录保留当时范围。
 
