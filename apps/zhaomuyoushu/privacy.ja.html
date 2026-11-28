@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="プライバシーポリシー · 朝暮有数">
+  <title>プライバシーポリシー · 朝暮有数</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/fonts/typefaces.css">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main-content">本文へ移動</a>
+<header class="site-header"><div class="container inner">
+  <a class="brand" href="../../index.ja.html" aria-label="アプリの法的情報とサポートのホーム"><svg class="brand-mark" aria-hidden="true" viewBox="0 0 24 28" fill="none"><path d="M5 2h10l5 5v19H5V2ZM15 2v6h5M9 13h7M9 18h7" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>アプリの法的情報とサポート</span></a>
+  <div class="header-tools">
+    <nav aria-label="朝暮有数"><a href="./privacy.ja.html" aria-current="page">プライバシー</a><a href="./terms.ja.html">利用規約</a><a href="./support.ja.html">サポート</a></nav>
+    <div class="language-switcher" role="group" aria-label="言語"><a data-language-link data-language="en" href="./privacy.html?lang=en" hreflang="en" lang="en">English</a><a data-language-link data-language="zh-Hans" href="./privacy.zh-Hans.html" hreflang="zh-Hans" lang="zh-Hans">简体中文</a><a data-language-link data-language="ja" href="./privacy.ja.html" hreflang="ja" lang="ja" aria-current="page">日本語</a></div>
+  </div>
+</div></header>
+<div class="article-shell"><div class="breadcrumb"><a href="../../index.ja.html"><span aria-hidden="true">←</span> すべてのアプリ</a></div>
+<main id="main-content" class="article">
+  <span class="badge">朝暮有数</span><h1>プライバシーポリシー</h1><div class="meta">最終更新日：2026年11月28日</div>
+  <!-- article-body:start -->
+  <h2>1. このポリシーについて</h2>
+<p>本ポリシーは朝暮有数による情報の取り扱いを説明します。アプリは個人開発者が提供します。連絡先：<a data-contact-email href="mailto:daniel.ding117@gmail.com">daniel.ding117@gmail.com</a>。最終更新日：2026年11月28日。</p>
+
+<h2>2. 帳簿、ToDo、圧縮写真添付</h2>
+<p>帳簿、明細、金額、カテゴリ、割り勘、立替・精算・貸借 ToDo、メモ、カスタム通貨、ショートカット、設定、および複数枚の添付写真（1件につき最大9枚の圧縮 JPEG）は端末内の SQLite データベースとアプリ領域に保存されます。開発者アカウントの登録は不要です。撮影時にカメラ権限、選択時に写真ライブラリ権限を求めます。設定 → 環境設定の「写真をアプリ内に保存」は初期設定でオンになっており、圧縮コピーをアプリ内サンドボックスに独立保存するため、端末の写真アプリから元画像を削除しても閲覧できます。オフの場合は端末のローカル画像 URI を参照します。すべての記録と写真はいつでも閲覧・ズーム表示・追加・編集・削除できます。</p>
+
+<h2>3. 任意の AI 音声・写真認識</h2>
+<p>基本の手動記帳、ToDo 管理、写真添付は無料で AI 契約は不要です。任意の AI 音声記帳（立替・精算・貸出・借入の相手先自動抽出を含む）または AI 写真・レシート認識には、有効な Apple AI Pro サブスクリプションまたはトライアル、通信接続、およびマイク・カメラ・写真権限が必要です。実行時は今回の音声データ／テキストまたは選択した圧縮レシート画像と、有効なカテゴリ名・帳簿名・通貨一覧・端末日時・IANA タイムゾーンのみを HTTPS で Serverless AI ゲートウェイ（中国本土は Alibaba Cloud Function Compute 上の Bailian／Qwen／DeepSeek、海外は Google Cloud Run 上の Gemini およびフォールバックモデル）へ送信します。クライアントに API キーは保持せず、既存の帳簿履歴や無関係な写真は送信しません。許可のない他人の情報や不要な機微情報は録音・送信しないでください。</p>
+
+<h2>4. 処理と保持</h2>
+<p>ゲートウェイは AI モデル呼び出し前に利用権を確認し、音声、認識テキスト、レシート画像、購入証明の永続データベースを作成しません。入力は記帳下書きと ToDo 候補の生成にのみ使用されます。端末上の一時録音ファイルは処理完了またはキャンセル時に削除されます。クラウド基盤が運用ログを保持する場合があり、Apple、Alibaba Cloud、Google Cloud には各社の処理・保持ポリシーが適用されます。すべての提供者システムからの即時削除は保証しません。AI 下書きは確認・保存するまで正式記録にならず、編集・取り消し・削除が可能です。</p>
+
+<h2>5. iCloud、書き出し、為替レート</h2>
+<p>任意の iCloud バックアップは、添付写真を含む手動の帳簿スナップショットを Apple Account に関連付けられた CloudKit プライベートデータベースに保存します。手動スナップショットであり複数端末の自動同期ではありません。端末の記録を削除しても過去のスナップショットや書き出し済みコピーは削除されません。CSV レポートは選択した共有先にのみ出力され、帳簿の復元には使えません。オンライン為替更新は公開レートサービスに通貨コードのみを送信し、帳簿記録は送りません。</p>
+
+<h2>6. サブスクリプションと診断</h2>
+<p>AI Pro 自動更新サブスクリプション（月額・年額プラン）および任意のチップ決済は Apple の StoreKit が処理します。アプリは検証済み取引、現地価格、利用権状態のみを読み取り、カード情報は受け取りません。任意のチップは AI 権限を解放しません。広告や追跡分析 SDK は組み込んでいません。iOS、TestFlight、クラウド基盤が各設定・ポリシーに従い診断情報を生成する場合があります。</p>
+
+<h2>7. 選択と完全な削除</h2>
+<p>AI を契約せず手動記帳、ToDo、複数写真添付を利用できます。iOS 設定でカメラ・マイク・写真権限を拒否・取り消し、アプリ内で任意の明細、ToDo、写真、カテゴリ、帳簿、カスタム通貨、ショートカットを編集・削除できます。記録や写真の削除時はアプリ内サンドボックスの不要なコピーも自動整理されますが、写真アプリ、共有 CSV、過去の iCloud スナップショットのコピーは個別に管理してください。アプリの削除は Apple 端末バックアップの挙動に従い端末データを消去しますが契約は解約されません。Apple Account のサブスクリプション設定から解約してください。</p>
+
+<h2>8. 連絡と変更</h2>
+<p>プライバシーに関するご質問やご依頼は <a data-contact-email href="mailto:daniel.ding117@gmail.com">daniel.ding117@gmail.com</a> へご連絡ください。必要がない限り帳簿、録音、購入証明をメールで送らず、スクリーンショットの個人情報を隠してください。重要な変更時は本ページの日付を更新します。<a href="./terms.ja.html">利用規約</a>と<a href="./support.ja.html">サポート</a>もご確認ください。</p>
+  <!-- article-body:end -->
+</main></div>
+<footer class="site-footer"><div class="container"><strong>アプリの法的情報とサポート</strong><span>© 2026 個人開発者。無断転載を禁じます。</span></div></footer>
+<script src="../../assets/site-language.js" defer></script>
+</body></html>

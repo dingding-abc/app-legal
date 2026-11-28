@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Privacy Policy · 朝暮有数">
+  <title>Privacy Policy · 朝暮有数</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../assets/fonts/typefaces.css">
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header"><div class="container inner">
+  <a class="brand" href="../../index.html?lang=en" aria-label="App Legal &amp; Support home"><svg class="brand-mark" aria-hidden="true" viewBox="0 0 24 28" fill="none"><path d="M5 2h10l5 5v19H5V2ZM15 2v6h5M9 13h7M9 18h7" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>App Legal &amp; Support</span></a>
+  <div class="header-tools">
+    <nav aria-label="朝暮有数"><a href="./privacy.html?lang=en" aria-current="page">Privacy</a><a href="./terms.html?lang=en">Terms</a><a href="./support.html?lang=en">Support</a></nav>
+    <div class="language-switcher" role="group" aria-label="Language"><a data-language-link data-language="en" href="./privacy.html?lang=en" hreflang="en" lang="en" aria-current="page">English</a><a data-language-link data-language="zh-Hans" href="./privacy.zh-Hans.html" hreflang="zh-Hans" lang="zh-Hans">简体中文</a><a data-language-link data-language="ja" href="./privacy.ja.html" hreflang="ja" lang="ja">日本語</a></div>
+  </div>
+</div></header>
+<div class="article-shell"><div class="breadcrumb"><a href="../../index.html?lang=en"><span aria-hidden="true">←</span> All apps</a></div>
+<main id="main-content" class="article">
+  <span class="badge">朝暮有数</span><h1>Privacy Policy</h1><div class="meta">Last updated: November 28, 2026</div>
+  <!-- article-body:start -->
+  <h2>1. About this policy</h2>
+<p>This policy explains how 朝暮有数 handles information. The app is provided by an independent developer. Contact: <a data-contact-email href="mailto:daniel.ding117@gmail.com">daniel.ding117@gmail.com</a>. Last updated: November 28, 2026.</p>
+
+<h2>2. Your ledger, todos and compressed photos</h2>
+<p>Ledgers, transactions, amounts, categories, split bills, receivables and payables todos, notes, custom currencies, shortcuts, preferences and multi-photo attachments (up to nine compressed JPEG photos per transaction or todo) are stored locally in the app’s SQLite database and app storage on your device. No separate developer account is required. Camera access is requested when taking photos, and photo library access is requested when selecting images. In Settings → Preferences, “Save Photos Inside App” is on by default to store an independent compressed copy in the app sandbox so deleting photos from system Photos does not break viewing; turning it off references local photo URIs instead. You can view, zoom, add, edit and delete your records and photo attachments at any time.</p>
+
+<h2>3. Optional AI voice and photo recognition</h2>
+<p>Manual bookkeeping, todos and photo attachments are free and work without AI. Using optional AI voice bookkeeping (including automatic todo mapping for lend, borrow, proxy purchase and reimbursement phrases) or AI photo/receipt recognition requires an active Apple AI Pro subscription or eligible trial, network access and microphone, camera or photo permission. When invoked, only the current voice recording or transcript, or the selected compressed receipt photo, together with active category names, ledger names, currency list, local date/time and IANA time zone, is sent over HTTPS to our Serverless AI gateway (Alibaba Cloud Function Compute with Bailian/Qwen/DeepSeek in Mainland China, or Google Cloud Run with Gemini and fallback models overseas). No AI provider keys are stored in the client app, and unrelated ledger history or other photos are never uploaded. Do not record or upload sensitive details or other people’s information without permission.</p>
+
+<h2>4. Processing and retention</h2>
+<p>The gateway verifies active entitlement before invoking AI models and does not create a persistent database of your audio, transcripts, receipt images or purchase credentials; inputs are processed solely to return structured draft entries and todo suggestions. Temporary recording files on your device are removed when the workflow finishes or is cancelled. Cloud infrastructure may retain operational logs, and Apple, Alibaba Cloud and Google Cloud apply their own processing and retention policies; we do not promise immediate deletion from every provider system. Every AI draft requires your review and confirmation before becoming a formal record and supports editing, undo and deletion.</p>
+
+<h2>5. iCloud, exports and exchange rates</h2>
+<p>Optional iCloud backup stores manual ledger snapshots, including photo attachments, in the private CloudKit database associated with your Apple Account. Backup and restore are manual snapshots rather than automatic multi-device synchronization; deleting local records does not delete older snapshots or exported copies. CSV reports are shared only through the destination you choose and cannot restore the ledger. Online exchange-rate updates send currency-code requests to public exchange-rate services and never transmit your ledger records.</p>
+
+<h2>6. Subscriptions and diagnostics</h2>
+<p>Apple processes AI Pro auto-renewable subscriptions (monthly and annual plans) and any voluntary tips via StoreKit. The app reads verified transactions, local prices and entitlement status; we never receive your payment card details. Voluntary tips do not unlock AI features. The app contains no third-party advertising or tracking analytics SDKs. iOS, TestFlight and cloud hosting services may produce operational diagnostics under their own settings and policies.</p>
+
+<h2>7. Your choices and full deletion</h2>
+<p>You can use full manual bookkeeping, todos and photo attachments without AI, revoke camera, microphone or photo permissions in iOS Settings, and edit or delete any transaction, todo, photo attachment, category, ledger, custom currency or shortcut inside the app. Deleting a transaction or todo cleans up orphaned copies saved inside the app sandbox, while copies in system Photos, shared CSV exports and older iCloud snapshots must be managed separately. Removing the app deletes local app data subject to Apple device backup behavior and does not cancel an Apple subscription; manage cancellation in Apple Account subscriptions.</p>
+
+<h2>8. Contact and changes</h2>
+<p>For privacy questions or requests, contact <a data-contact-email href="mailto:daniel.ding117@gmail.com">daniel.ding117@gmail.com</a>. Avoid emailing private ledgers, recordings or purchase credentials unless needed, and redact sensitive details from screenshots. Material changes will be reflected here with an updated date. See our <a href="./terms.html?lang=en">terms</a> and <a href="./support.html?lang=en">support page</a>.</p>
+  <!-- article-body:end -->
+</main></div>
+<footer class="site-footer"><div class="container"><strong>App Legal &amp; Support</strong><span>© 2026 Independent Developer. All rights reserved.</span></div></footer>
+<script src="../../assets/site-language.js" defer></script>
+</body></html>

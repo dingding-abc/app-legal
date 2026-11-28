@@ -1,20 +1,17 @@
 # 朝暮有数政策维护
 
-2026-10-12。与 AlignerDiary 共用当前站点、三语生成、页面样式及 `assets/site-config.js` 联系地址。独立目录 `apps/keepaccounts/`，中英文及日文逐节对应。新增条款不改变 AlignerDiary 的正文和 2026-09-20 日期。
+2026-11-28。与 AlignerDiary 共用当前站点、三语生成、页面样式及 `assets/site-config.js` 联系地址。独立公开路径已按用户要求更新为新应用名 `apps/zhaomuyoushu/`（`assets/app-catalog.js` 中的 Apple `bundleId: 'com.dzy.keepaccounts'` 保持不变），中英文及日文逐节对应。本次更新不改变 AlignerDiary 的正文和 `2026-11-23` 日期。
 
 ## 事实来源
 
-应用仓库 `dingding-abc/keep-accounts`，订阅实现基线 `74b0ff4`。此页路径指应用仓库。
+应用当前工作区 `d:/Project/02_jizhang_ios_google`（对外显示名「朝暮有数」，iOS `bundleIdentifier` 未改动）。
 
 | 数据/功能 | 地点、用途与删除 | 代码证据 |
 | --- | --- | --- |
-| 账单、备注、代付、照片 | 设备内 SQLite；删除账单不清除外部副本 | `iphone/src/services/repository.ts`、`iphone/src/ui/SettingsScreen.tsx` |
-| 语音与当前字典 | HTTPS → 上海 FC → 百炼/千问；仅请求内处理，不建录音/权益业务库 | `iphone/src/services/nativeVoice.ts`、`services/ai-gateway/app.py` |
-| 购买凭证 | StoreKit 本地验证；FC 向 Apple 每次查当前权益，无订阅状态数据库 | `iphone/modules/keepaccounts-storekit/ios/SubscriptionStore.swift`、`services/ai-gateway/apple_entitlement.py` |
-| 备份快照及照片 | Apple Account 的 CloudKit 私有库；手动创建/恢复，最多10份；单独删除 | `iphone/src/ui/CloudBackupPanel.tsx`、`iphone/modules/keepaccounts-cloud-backup/` |
-| CSV、相册副本 | 系统分享指定目的地／用户可选相册保存；用户分别管理 | `iphone/src/ui/SettingsScreen.tsx`、`iphone/src/services/photoAssets.ts` |
-| 汇率请求 | ExchangeRate-API、Fawaz Currency API、Frankfurter；不含账单 | `iphone/src/services/rates.ts` |
-| 付款 | Apple 收款；月订阅与自愿消耗型打赏独立；不接收银行卡 | `iphone/src/services/subscriptions/`、`iphone/src/services/tips/` |
+| 账单、备注、分账、往来待办、多图附件 | 本机 SQLite（WAL 分表增量持久化）与应用沙盒压缩多图（单条最多 9 张 JPEG）；「拍照与选图存入应用」开关默认开启，删除记录自动清理孤立副本，完整增删改查 | `src/services/storage/ledgerSqliteStorage.ts`、`src/services/media/photoStorageService.ts`、`src/store/useFlowStore.ts` |
+| 可选 AI 语音（含待办自动映射）与 AI 拍照票据识别 | HTTPS → 双边 Serverless 网关（中国内地阿里云 FC + 百炼/千问/DeepSeek；海外 Google Cloud Run + Gemini/容灾）；客户端零密钥；仅请求内处理，不建账单/录音/图片持久化库 | `src/services/ai/aiRecognitionService.ts`、`serverless/src/prompts.mjs`、`serverless/src/gateway.mjs` |
+| 订阅权益与购买凭证 | Apple StoreKit 月度/年度自动续订；基础手动记账、待办与多图附件免费；不接收银行卡 | `src/components/modals/AiSubscriptionModal.tsx` |
+| 备份快照、CSV 与汇率请求 | 可选 iCloud 私有库快照；CSV 通过系统分享导出；公开汇率接口仅请求币种汇率，不含账单 | `src/services/currency/exchangeRateService.ts`、`src/components/views/DetailsPane.tsx` |
 
 AI 草稿仅用户确认后入账。基础记账和照片附件免费；照片识别尚未提供。月订阅基准 US$3.00，界面与条款采用 Apple 当地实际报价；Apple 一周免费首次优惠由资格决定。TestFlight 沙盒时间可能加速，不代表正式试用时长。
 
