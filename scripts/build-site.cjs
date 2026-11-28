@@ -9,7 +9,7 @@ const apps = require('../assets/app-catalog.js');
 const { messages, supported } = require('../assets/i18n.js');
 const alignerLanguages = require('../assets/aligner-languages.js');
 const homeCopy = require('../assets/home-copy.js');
-const modernApps = new Set(['alignerdiary', 'miaomiaojizhang']);
+const modernApps = new Set(['alignerdiary', 'kinsanote', 'miaomiaojizhang']);
 const modernBodiesCache = new Map();
 const bodies = {
   'zh-Hans': require('../assets/locales/zh-Hans.js'),
@@ -93,10 +93,10 @@ function renderHomeApp(id, locale, copy) {
       <div class="home-app-heading">
         <img class="home-app-icon" src="${icon}" width="56" height="56" alt="">
         <div>
-          <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n          <p class="home-app-note" id="miaomiaojizhang-note">' + esc(note) + '</p>' : ''}
+          <h2 id="${id}"><bdi lang="${nameLanguage}">${esc(name)}</bdi></h2>${note ? '\n          <p class="home-app-note" id="' + id + '-note">' + esc(note) + '</p>' : ''}
         </div>
       </div>
-      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="miaomiaojizhang-note"' : ''}><ul>${links}${storeLink}</ul></nav>
+      <nav class="home-app-links" aria-labelledby="${id}"${note ? ' aria-describedby="' + id + '-note"' : ''}><ul>${links}${storeLink}</ul></nav>
     </section>`;
 }
 function renderHome(locale) {

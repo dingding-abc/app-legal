@@ -11,16 +11,18 @@ const { messages, supported } = require('../assets/i18n.js');
 const aligner = require('../assets/aligner-languages.js');
 const homeCopy = require('../assets/home-copy.js');
 const alignerBodies = require('../assets/locales/alignerdiary.js');
+const kinsanoteBodies = require('../assets/locales/kinsanote.js');
 const miaomiaojizhangBodies = require('../assets/locales/miaomiaojizhang.js');
 const modernAppChecks = {
   alignerdiary: { bodies: alignerBodies, date: '2026-11-23', fallbackName: 'AlignerDiary' },
+  kinsanote: { bodies: kinsanoteBodies, date: '2026-11-28', fallbackName: 'Kinsanote' },
   miaomiaojizhang: { bodies: miaomiaojizhangBodies, date: '2026-11-28', fallbackName: 'Swiftally' },
 };
 // Independent approved scope: the registry and generator cannot validate each other.
 const expectedAligner = ['ar', 'de', 'en', 'es', 'fr', 'it', 'ja', 'ko', 'pt', 'zh-Hans', 'zh-Hant'];
 const legacyLanguages = ['en', 'zh-Hans', 'ja'];
 const kinds = ['privacy', 'terms', 'support'];
-const usesFullLanguageMenu = base => base === 'index' || base.startsWith('apps/alignerdiary/') || base.startsWith('apps/miaomiaojizhang/');
+const usesFullLanguageMenu = base => base === 'index' || base.startsWith('apps/alignerdiary/') || base.startsWith('apps/kinsanote/') || base.startsWith('apps/miaomiaojizhang/');
 const localesFor = base => usesFullLanguageMenu(base) ? expectedAligner : supported;
 const copyFor = (base, lang) => usesFullLanguageMenu(base) ? aligner.messages[lang] : messages[lang];
 const bodyOf = html => html.match(/<!-- article-body:start -->([\s\S]*?)<!-- article-body:end -->/)?.[1]?.trim();
@@ -29,7 +31,7 @@ const visible = html => decode(html.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^
 function checkVersionedAssets(html, relative) {
   const resources = [...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(m => new URL(m[1], 'https://example.test/' + relative));
   const pairedAssets = ['assets/style.css', 'assets/fonts/typefaces.css', 'assets/site-language.js'];
-  if (relative.startsWith('index')) pairedAssets.push('assets/home.css', 'assets/alignerdiary-icon.webp', 'assets/miaomiaojizhang-icon.webp');
+  if (relative.startsWith('index')) pairedAssets.push('assets/home.css', 'assets/alignerdiary-icon.webp', 'assets/kinsanote-icon.webp', 'assets/miaomiaojizhang-icon.webp');
   for (const asset of pairedAssets) {
     const matches = resources.filter(url => url.pathname === '/' + asset);
     assert(matches.length === 1, relative + ': missing/duplicate paired asset ' + asset);
@@ -73,6 +75,7 @@ function checkContacts(html, relative, rtl) {
 
 const basePages = [
   'index',
+  'apps/kinsanote/privacy', 'apps/kinsanote/terms', 'apps/kinsanote/support',
   'apps/miaomiaojizhang/privacy', 'apps/miaomiaojizhang/terms', 'apps/miaomiaojizhang/support',
   'apps/alignerdiary/privacy', 'apps/alignerdiary/terms', 'apps/alignerdiary/support',
   'apps/_template/privacy', 'apps/_template/terms', 'apps/_template/support',
@@ -130,7 +133,7 @@ for (const [appId, spec] of Object.entries(modernAppChecks)) {
 }
 const expectedFiles = basePages.flatMap(base => localesFor(base).map(lang => fileFor(base, lang))).sort();
 const actualFiles = fs.readdirSync(root).filter(f => f.endsWith('.html')).concat(fs.readdirSync(path.join(root, 'apps')).flatMap(app => fs.readdirSync(path.join(root, 'apps', app)).filter(f => f.endsWith('.html')).map(f => 'apps/' + app + '/' + f))).sort();
-assert(expectedFiles.length === 86 && JSON.stringify(actualFiles) === JSON.stringify(expectedFiles), 'static output: expected exact 86 pages (33 AlignerDiary + 33 Miaomiaojizhang + 9 template + 11 home)');
+assert(expectedFiles.length === 119 && JSON.stringify(actualFiles) === JSON.stringify(expectedFiles), 'static output: expected exact 119 pages (33 AlignerDiary + 33 Kinsanote + 33 Miaomiaojizhang + 9 template + 11 home)');
 for (const [id, app] of Object.entries(apps)) {
   for (const language of supported) {
     const listing = app.locales[language];
@@ -143,7 +146,7 @@ for (const [id, app] of Object.entries(apps)) {
 for (const base of basePages) {
   const home = base === 'index';
   const template = base.startsWith('apps/_template/');
-  const modernAppId = base.startsWith('apps/alignerdiary/') ? 'alignerdiary' : base.startsWith('apps/miaomiaojizhang/') ? 'miaomiaojizhang' : null;
+  const modernAppId = base.startsWith('apps/alignerdiary/') ? 'alignerdiary' : base.startsWith('apps/kinsanote/') ? 'kinsanote' : base.startsWith('apps/miaomiaojizhang/') ? 'miaomiaojizhang' : null;
   const app = Boolean(modernAppId);
   const kind = home ? 'home' : base.split('/').at(-1);
   const english = fs.readFileSync(path.join(root, fileFor(base, 'en')), 'utf8');
@@ -185,7 +188,7 @@ for (const base of basePages) {
       assert(count(html, /href="mailto:/g) === 1, relative + ': expected one homepage contact');
       assert(visible(html).includes(homeCopy[lang]?.contact), relative + ': contact label missing');
       const sections = [...html.matchAll(/<section class="home-app" aria-labelledby="([^"]+)">([\s\S]*?)<\/section>/g)];
-      assert(sections.length === 2 && sections[0][1] === 'alignerdiary' && sections[1][1] === 'miaomiaojizhang', relative + ': wrong app order or list size');
+      assert(sections.length === 3 && sections[0][1] === 'alignerdiary' && sections[1][1] === 'kinsanote' && sections[2][1] === 'miaomiaojizhang', relative + ': wrong app order or list size');
       for (const [, id, section] of sections) {
         const isAligner = id === 'alignerdiary';
         const listing = apps[id].locales[lang];
@@ -206,9 +209,10 @@ for (const base of basePages) {
         if (isAligner) {
           assert(attrs(links[3][1]).href === (listing?.storeURL || apps.alignerdiary.locales.en.storeURL), relative + ': store URL mismatch');
         } else {
-          const note = section.match(/<p class="home-app-note" id="miaomiaojizhang-note">([\s\S]*?)<\/p>/);
+          const notePattern = new RegExp(`<p class="home-app-note" id="${id}-note">([\\s\\S]*?)</p>`);
+          const note = section.match(notePattern);
           const expected = homeCopy[lang].testing;
-          assert(note && visible(note[1]) === expected && section.includes('aria-describedby="miaomiaojizhang-note"'), relative + ': testing status is missing or unassociated');
+          assert(note && visible(note[1]) === expected && section.includes(`aria-describedby="${id}-note"`), relative + ': testing status is missing or unassociated');
         }
       }
     } else {
@@ -352,7 +356,7 @@ for (const base of basePages) {
     const expected = 'https://example.test/repository-prefix/' + fileFor(base, saved);
     // Main-agent accepted difference: every 11-language app document URL is explicit, even without
     // a suffix, so a blocked English preference write cannot cause a bounce.
-    assert(result.redirected === (base.startsWith('apps/alignerdiary/') || base.startsWith('apps/miaomiaojizhang/') ? null : expected), fileFor(base, 'en') + ': default URL preference contract drift for ' + saved);
+    assert(result.redirected === (base.startsWith('apps/alignerdiary/') || base.startsWith('apps/kinsanote/') || base.startsWith('apps/miaomiaojizhang/') ? null : expected), fileFor(base, 'en') + ': default URL preference contract drift for ' + saved);
   }
   for (const saved of [null, '', 'xx', 'ru', ...(usesFullLanguageMenu(base) ? [] : ['ar', 'it', 'zh-Hant'])]) {
     assert(runLanguage(fileFor(base, 'en'), saved).redirected === null, base + ': invalid/unsupported preference redirected');
@@ -367,14 +371,14 @@ for (const base of basePages) {
 for (const saved of ['ja', 'zh-Hans', 'ar', 'it']) assert(runLanguage('index.html', saved, false, '/repository-prefix/', '?lang=en').redirected === null, 'explicit English home query redirected');
 for (const prefix of ['/', '/repository-prefix/']) {
   assert(runLanguage('index.html', 'ar', false, prefix).redirected === 'https://example.test' + prefix + 'index.ar.html', 'default home lost saved Arabic at ' + prefix);
-  for (const page of ['index.html', 'apps/miaomiaojizhang/privacy.html', 'apps/miaomiaojizhang/terms.html', 'apps/miaomiaojizhang/support.html']) {
+  for (const page of ['index.html', 'apps/kinsanote/privacy.html', 'apps/kinsanote/terms.html', 'apps/kinsanote/support.html', 'apps/miaomiaojizhang/privacy.html', 'apps/miaomiaojizhang/terms.html', 'apps/miaomiaojizhang/support.html']) {
     const explicit = runLanguage(page, 'ja', 'write', prefix, page === 'index.html' ? '?lang=en' : '');
     assert(explicit.redirected === null, page + ': English locale should beat readable saved Japanese after failed write');
     explicit.handlers.en({});
     assert(explicit.getStored() === 'ja', page + ': write-blocked fixture should retain saved Japanese');
   }
 }
-for (const page of ['index', 'apps/alignerdiary/privacy', 'apps/miaomiaojizhang/privacy']) for (const lang of ['en', 'ar', 'de']) {
+for (const page of ['index', 'apps/alignerdiary/privacy', 'apps/kinsanote/privacy', 'apps/miaomiaojizhang/privacy']) for (const lang of ['en', 'ar', 'de']) {
   const state = runLanguage(fileFor(page, lang), null);
   assert(state.focusCalls() === 0, 'closed menu unexpectedly moved focus');
   state.menu.open = true;

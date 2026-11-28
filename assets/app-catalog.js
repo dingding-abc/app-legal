@@ -1,6 +1,14 @@
 // Public App Store names, verified with Apple's lookup API on 2026-10-07.
 // Keep the store title verbatim so visitors can search for the same app.
 module.exports = Object.freeze({
+  kinsanote: {
+    storeId: '6840276413', bundleId: 'com.dzy.wellog', status: 'testing', policyUpdated: '2026-11-28',
+    locales: {
+      en: { name: 'Kinsanote', description: 'Family health & medical checkup log with lossless multi-page report photos, timeline tracking, optional iCloud Family Sharing and AI extraction. In testing.' },
+      'zh-Hans': { name: '亲安记', description: '家庭健康与复查病历本，支持多页报告无损原图、成员变迁时间线、可选 iCloud 家庭共享与 AI 识别。测试中。' },
+      ja: { name: 'Kinsanote', description: '家族の健康・検査記録ノート。高画質複数ページ原本写真、経過タイムライン、任意の iCloud ファミリー共有および AI 読み取りに対応。テスト中。' },
+    },
+  },
   miaomiaojizhang: {
     storeId: '6820356123', bundleId: 'com.dzy.keepaccounts', status: 'testing', policyUpdated: '2026-11-28',
     locales: {

@@ -1,6 +1,7 @@
 (function (root) {
   'use strict';
   const body = {
+    kinsanote: require('./kinsanote.js')['zh-Hans'],
     miaomiaojizhang: require('./miaomiaojizhang.js')['zh-Hans'],
     alignerdiary: require('./alignerdiary.js')['zh-Hans'],
     template: {

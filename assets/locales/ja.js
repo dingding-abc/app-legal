@@ -1,6 +1,7 @@
 (function (root) {
   'use strict';
   const body = {
+    kinsanote: require('./kinsanote.js').ja,
     miaomiaojizhang: require('./miaomiaojizhang.js').ja,
     alignerdiary: require('./alignerdiary.js').ja,
     template: {

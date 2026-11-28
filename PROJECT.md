@@ -1,3 +1,5 @@
+> 2026-11-28 新增 **亲安记 (`Kinsanote`)**（`apps/kinsanote/`，`bundleId: 'com.dzy.wellog'`，`storeId: '6840276413'`，测试中状态）11 语言隐私／条款／支持文档与首页卡片图标 `assets/kinsanote-icon.webp`（简体中文展示「亲安记」，英文及其他国际语种展示「Kinsanote」，统一由 `assets/locales/kinsanote.js` 维护，日期 `2026-11-28`，33 页）；站点总计 119 页（首页 11 + AlignerDiary 33 + 亲安记 33 + 秒秒记账 33 + 模板 9）。
+
 > 2026-11-28 秒秒记账（英文名 `Swiftally`）公开文档目录由 `apps/keepaccounts/` 迁移至 `apps/miaomiaojizhang/`（保留 `bundleId: 'com.dzy.keepaccounts'` 不变），并升级至与 AlignerDiary 完全一致的 11 语言 `.aligner-doc` 页面框架（简体中文展示「秒秒记账」，英文及其他国际语种展示「Swiftally」，统一由 `assets/locales/miaomiaojizhang.js` 维护，日期 `2026-11-28`，33 页）；AlignerDiary 33 页及模板 9 页保持不变，站点总计 86 页（首页 11 + AlignerDiary 33 + 秒秒记账 33 + 模板 9）。
 
 > 2026-11-23 首页现为双应用文档目录。首页对应 AlignerDiary 的 11 种语言；秒秒记账在其余八种首页语言提示使用英语文档。当前生成总数 62。下方带日期的记录描述当时范围。
